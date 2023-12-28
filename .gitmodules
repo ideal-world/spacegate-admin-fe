@@ -1,0 +1,3 @@
+[submodule "components/config"]
+	path = components/config
+	url = https://github.com/ideal-world/spacegate-admin-front.git
