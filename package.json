@@ -13,7 +13,7 @@
     "autoprefixer": "^10.4.16",
     "element-plus": "^2.4.4",
     "postcss": "^8.4.32",
-    "spacegate-admin": "file:../spacegate-admin",
+    "spacegate-admin": "file:./component/config",
     "tailwindcss": "^3.4.0",
     "vue": "^3.3.13",
     "vue-i18n": "^9.8.0",
