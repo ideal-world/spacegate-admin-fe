@@ -1,0 +1,37 @@
+name: Frontend CICD
+
+on: [push, pull_request]
+
+env:
+  ARTIFACT_DIR: release-artifacts
+  FRONTEND_ARTIFACT_NAME: frontend-artifact
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run:  npm install
+
+      - name: Build
+        run:  npm run build
+
+      - name: Archive artifacts
+        run: tar -czvf ${{ env.FRONTEND_ARTIFACT_NAME }}.tar.gz dist
+
+      - name: Archive front artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.FRONTEND_ARTIFACT_NAME }}
+          path: ${{ env.FRONTEND_ARTIFACT_NAME }}.tar.gz
