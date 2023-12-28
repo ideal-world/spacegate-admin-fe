@@ -22,10 +22,10 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run:  npm install
+        run: cd components/config && npm install && cd ../.. && npm install
 
-      - name: Build
-        run:  npm run build
+      - name: Build all
+        run: npm run build-all
 
       - name: Archive artifacts
         run: tar -czvf ${{ env.FRONTEND_ARTIFACT_NAME }}.tar.gz dist
