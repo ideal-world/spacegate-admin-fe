@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dashboard } from 'spacegate-admin'
+import { Dashboard } from '@component-config'
 </script>
 
 <template>

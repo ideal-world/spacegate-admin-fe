@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Menu from './components/Menu.vue'
 import Header from './components/Header.vue'
 import { useRouter } from 'vue-router'
-import { SelectInstance } from 'spacegate-admin'
+import { SelectInstance } from '@component-config'
 import { Fold, Expand, DataAnalysis, Upload } from '@element-plus/icons-vue'
 import {
   Lang,
@@ -16,6 +16,7 @@ import {
 } from './icons'
 import { useI18n } from 'vue-i18n'
 const { locale } = useI18n()
+const router = useRouter()
 const langs = [
   {
     name: '中文',
@@ -27,8 +28,6 @@ const langs = [
   }
 ]
 const isMenuCollapse = ref(false)
-const currentPage = ref('')
-const router = useRouter()
 const pages = [
   {
     name: 'dashboard',
@@ -42,6 +41,7 @@ const pages = [
   { name: 'certificate', path: '/certificate', icon: CertIcon },
   { name: 'gateway', path: '/gateway', icon: GatewayIcon },
 ]
+const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 
 function toPage(pageName: string) {
   let page = pages.find(p => p.path === pageName);

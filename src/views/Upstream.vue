@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Upstream } from 'spacegate-admin'
+import { Upstream } from '@component-config'
 </script>
 
 <template>
