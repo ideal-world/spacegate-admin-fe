@@ -83,7 +83,10 @@ function toPage(pageName: string) {
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button text circle :icon="Github" link></el-button>
+            <a href="https://github.com/ideal-world/spacegate-admin-fe" target="_blank">
+              <el-button text circle :icon="Github" link>
+              </el-button>
+            </a>
           </template>
         </Header>
       </el-header>
