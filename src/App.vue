@@ -35,16 +35,12 @@ const pages = [
     path: '/dashboard',
     icon: DataAnalysis
   },
-  {
-    name: 'certificate',
-    path: '/certificate',
-    icon: CertIcon
-  },
-  { name: 'gateway', path: '/gateway', icon: GatewayIcon },
-  { name: 'plugin', path: '/plugin', icon: PluginIcon },
-  { name: 'route', path: '/route', icon: RouterIcon },
   { name: 'service', path: '/service', icon: ServiceIcon },
+  { name: 'route', path: '/route', icon: RouterIcon },
   { name: 'upstream', path: '/upstream', icon: Upload },
+  { name: 'plugin', path: '/plugin', icon: PluginIcon },
+  { name: 'certificate', path: '/certificate', icon: CertIcon },
+  { name: 'gateway', path: '/gateway', icon: GatewayIcon },
 ]
 
 function toPage(pageName: string) {
@@ -96,7 +92,7 @@ function toPage(pageName: string) {
       </el-main>
       <el-footer class="flex justify-center align-center items-center">
         <div class="container mx-auto flex justify-center">
-          <p class="text-center text-sm text-gray-500">&copy; Copyright spacegate</p>
+          <p class="text-center text-sm text-gray-500">&copy; 2023 Ideal World</p>
         </div>
       </el-footer>
     </el-container>

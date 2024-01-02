@@ -18,8 +18,8 @@ dependencies:
     specifier: ^8.4.32
     version: 8.4.32
   spacegate-admin:
-    specifier: file:../spacegate-admin
-    version: file:../spacegate-admin(@element-plus/icons-vue@2.3.1)(element-plus@2.4.4)(typescript@5.3.3)(vue@3.3.13)
+    specifier: file:./components/config
+    version: file:components/config(@element-plus/icons-vue@2.3.1)(element-plus@2.4.4)(typescript@5.3.3)(vue@3.3.13)
   tailwindcss:
     specifier: ^3.4.0
     version: 3.4.0
@@ -1930,10 +1930,10 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
-  file:../spacegate-admin(@element-plus/icons-vue@2.3.1)(element-plus@2.4.4)(typescript@5.3.3)(vue@3.3.13):
-    resolution: {directory: ../spacegate-admin, type: directory}
-    id: file:../spacegate-admin
-    name: spacegate-admin
+  file:components/config(@element-plus/icons-vue@2.3.1)(element-plus@2.4.4)(typescript@5.3.3)(vue@3.3.13):
+    resolution: {directory: components/config, type: directory}
+    id: file:components/config
+    name: spacegate-admin-front
     peerDependencies:
       '@element-plus/icons-vue': ^2.1.0
       element-plus: ^2.3.12
