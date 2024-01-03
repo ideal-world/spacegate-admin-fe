@@ -31,7 +31,7 @@ dependencies:
     version: 4.2.5(vue@3.3.13)
 
 devDependencies:
-  '@components-config':
+  '@components/config':
     specifier: file:./components/config
     version: file:components/config(@element-plus/icons-vue@2.3.1)(element-plus@2.4.4)(typescript@5.3.3)(vue@3.3.13)
   '@vitejs/plugin-vue':

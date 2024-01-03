@@ -4,7 +4,7 @@ import App from './App.vue'
 import router from './router'
 import El from 'element-plus'
 import 'element-plus/dist/index.css'
-import SgAdm, { SpacegateService as SgSrv, MESSAGES } from '@component-config'
+import SgAdm, { SpacegateService as SgSrv, MESSAGES } from '@component/config'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { createI18n } from 'vue-i18n'
 let i18n = createI18n({

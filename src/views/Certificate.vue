@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Certificate } from '@component-config'
+import { Certificate } from '@component/config'
 </script>
 
 <template>

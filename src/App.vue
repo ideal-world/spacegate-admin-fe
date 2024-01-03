@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Menu from './components/Menu.vue'
 import Header from './components/Header.vue'
 import { useRouter } from 'vue-router'
-import { SelectInstance } from '@component-config'
+import { SelectInstance } from '@component/config'
 import { Fold, Expand, DataAnalysis, Upload } from '@element-plus/icons-vue'
 import {
   Lang,

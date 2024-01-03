@@ -22,7 +22,7 @@
   "devDependencies": {
     "sass": "^1.69.6",
     "@vitejs/plugin-vue": "^4.6.0",
-    "@components-config": "file:./components/config",
+    "@components/config": "file:./components/config",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
     "vue-tsc": "^1.8.27"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dashboard } from '@component-config'
+import { Dashboard } from '@component/config'
 </script>
 
 <template>
