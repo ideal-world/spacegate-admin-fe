@@ -28,12 +28,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@component/config': path.resolve(__dirname, './components/config'),
+      '@components/config': path.resolve(__dirname, './components/config'),
     }
   },
   optimizeDeps: {
     include: [
-      '@component/config'
+      '@components/config'
     ]
   }
 })

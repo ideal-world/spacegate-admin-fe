@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Route } from '@component/config'
+import { Route } from '@components/config'
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Gateway } from '@component/config'
+import { Gateway } from '@components/config'
 </script>
 
 <template>

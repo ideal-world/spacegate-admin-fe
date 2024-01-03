@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Upstream } from '@component/config'
+import { Upstream } from '@components/config'
 </script>
 
 <template>

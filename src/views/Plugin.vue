@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plugin } from '@component/config'
+import { Plugin } from '@components/config'
 </script>
 
 <template>

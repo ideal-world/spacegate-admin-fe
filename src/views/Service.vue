@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Service } from '@component/config'
+import { Service } from '@components/config'
 </script>
 
 <template>
