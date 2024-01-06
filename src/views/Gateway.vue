@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Gateway } from 'spacegate-admin'
+import { Gateway } from '@components/config'
 </script>
 
 <template>

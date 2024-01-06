@@ -1,7 +1,9 @@
+/** @type {import('vite').UserConfig} */
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-
+import path from 'path'
 // https://vitejs.dev/config/
+console.log(path.resolve(__dirname, './components/config'))
 export default defineConfig({
   plugins: [vue()],
   server: {
@@ -22,6 +24,16 @@ export default defineConfig({
     hmr: {
       overlay: false
     },
-    host: '0.0.0.0'
+    host: '0.0.0.0',
   },
+  resolve: {
+    alias: {
+      '@components/config': path.resolve(__dirname, './components/config'),
+    }
+  },
+  optimizeDeps: {
+    include: [
+      '@components/config'
+    ]
+  }
 })

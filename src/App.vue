@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Menu from './components/Menu.vue'
 import Header from './components/Header.vue'
 import { useRouter } from 'vue-router'
-import { SelectInstance } from 'spacegate-admin'
+import { SelectInstance } from '@components/config'
 import { Fold, Expand, DataAnalysis, Upload } from '@element-plus/icons-vue'
 import {
   Lang,
@@ -16,6 +16,7 @@ import {
 } from './icons'
 import { useI18n } from 'vue-i18n'
 const { locale } = useI18n()
+const router = useRouter()
 const langs = [
   {
     name: '中文',
@@ -27,25 +28,20 @@ const langs = [
   }
 ]
 const isMenuCollapse = ref(false)
-const currentPage = ref('')
-const router = useRouter()
 const pages = [
   {
     name: 'dashboard',
     path: '/dashboard',
     icon: DataAnalysis
   },
-  {
-    name: 'certificate',
-    path: '/certificate',
-    icon: CertIcon
-  },
-  { name: 'gateway', path: '/gateway', icon: GatewayIcon },
-  { name: 'plugin', path: '/plugin', icon: PluginIcon },
-  { name: 'route', path: '/route', icon: RouterIcon },
   { name: 'service', path: '/service', icon: ServiceIcon },
+  { name: 'route', path: '/route', icon: RouterIcon },
   { name: 'upstream', path: '/upstream', icon: Upload },
+  { name: 'plugin', path: '/plugin', icon: PluginIcon },
+  { name: 'certificate', path: '/certificate', icon: CertIcon },
+  { name: 'gateway', path: '/gateway', icon: GatewayIcon },
 ]
+const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 
 function toPage(pageName: string) {
   let page = pages.find(p => p.path === pageName);
@@ -87,7 +83,10 @@ function toPage(pageName: string) {
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button text circle :icon="Github" link></el-button>
+            <a href="https://github.com/ideal-world/spacegate-admin-fe" target="_blank">
+              <el-button text circle :icon="Github" link>
+              </el-button>
+            </a>
           </template>
         </Header>
       </el-header>
@@ -96,7 +95,7 @@ function toPage(pageName: string) {
       </el-main>
       <el-footer class="flex justify-center align-center items-center">
         <div class="container mx-auto flex justify-center">
-          <p class="text-center text-sm text-gray-500">&copy; Copyright spacegate</p>
+          <p class="text-center text-sm text-gray-500">&copy; 2023 Ideal World</p>
         </div>
       </el-footer>
     </el-container>
