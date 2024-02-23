@@ -1,0 +1,1 @@
+export const GATEWAY_NAME_SYMBOL: unique symbol = Symbol('gatewayName');

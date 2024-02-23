@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 import Menu from './components/Menu.vue'
 import Header from './components/Header.vue'
 import { useRouter } from 'vue-router'
-import { SelectInstance } from '@components/config'
-import { Fold, Expand, DataAnalysis, Upload } from '@element-plus/icons-vue'
+import { SelectGateway } from '@components/config'
+import { Fold, Expand, } from '@element-plus/icons-vue'
 import {
   Lang,
-  PluginIcon,
-  ServiceIcon,
   RouterIcon,
-  CertIcon,
   GatewayIcon,
   Github,
 } from './icons'
 import { useI18n } from 'vue-i18n'
+import { GATEWAY_NAME_SYMBOL } from './consts';
 const { locale } = useI18n()
 const router = useRouter()
 const langs = [
@@ -29,20 +27,12 @@ const langs = [
 ]
 const isMenuCollapse = ref(false)
 const pages = [
-  {
-    name: 'dashboard',
-    path: '/dashboard',
-    icon: DataAnalysis
-  },
-  { name: 'service', path: '/service', icon: ServiceIcon },
-  { name: 'route', path: '/route', icon: RouterIcon },
-  { name: 'upstream', path: '/upstream', icon: Upload },
-  { name: 'plugin', path: '/plugin', icon: PluginIcon },
-  { name: 'certificate', path: '/certificate', icon: CertIcon },
   { name: 'gateway', path: '/gateway', icon: GatewayIcon },
+  { name: 'route', path: '/route', icon: RouterIcon },
 ]
 const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
-
+const gatewayName = ref<string>()
+provide(GATEWAY_NAME_SYMBOL, gatewayName)
 function toPage(pageName: string) {
   let page = pages.find(p => p.path === pageName);
   if (!page) {
@@ -57,7 +47,7 @@ function toPage(pageName: string) {
 
 <template>
   <el-container class="h-screen w-screen">
-    <el-aside :width="isMenuCollapse ? 64 : 200" class="min-h-screen flex flex-shrink">
+    <el-aside class="min-h-screen w-auto flex flex-shrink ">
       <Menu :collapse="isMenuCollapse" :current-page="currentPage" :pages="pages" @to-page="toPage" class="w-full" />
     </el-aside>
     <el-container class="flex-grow">
@@ -65,10 +55,10 @@ function toPage(pageName: string) {
         <Header>
           <template #left>
             <el-button circle text size="large" :icon="isMenuCollapse ? Expand : Fold"
-              @click="isMenuCollapse = !isMenuCollapse"></el-button>
+            @click="isMenuCollapse = !isMenuCollapse"></el-button>
+            <SelectGateway v-model="gatewayName" />
           </template>
           <template #right>
-            <SelectInstance />
             <el-dropdown>
               <span class="el-dropdown-link">
                 <el-button circle text size="large" :icon="Lang" />

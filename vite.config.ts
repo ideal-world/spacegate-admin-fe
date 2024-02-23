@@ -15,9 +15,9 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, '')
       },
-      '/admin': {
+      '/config': {
         // target: 'http://192.168.31.164:9080/',
-        target: 'http://localhost:9081/',
+        target: 'http://localhost:9001/',
         changeOrigin: true,
       }
     },
@@ -29,6 +29,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@components/config': path.resolve(__dirname, './components/config'),
+      "@": path.resolve("./src")
     }
   },
   optimizeDeps: {

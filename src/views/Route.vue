@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { Route } from '@components/config'
+import { Routes } from '@components/config'
+import { Ref, inject } from 'vue'
+import { GATEWAY_NAME_SYMBOL } from '../consts';
+const gatewayName: Ref<string | undefined> = inject(GATEWAY_NAME_SYMBOL)!
 </script>
 
 <template>
-  <Route />
+  <Routes v-if="gatewayName !== undefined" :gateway-name="gatewayName"/>
 </template>
