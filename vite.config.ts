@@ -16,8 +16,8 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/api/, '')
       },
       '/config': {
-        // target: 'http://192.168.31.164:9080/',
-        target: 'http://localhost:9001/',
+        target: 'http://172.30.87.55:9080/',
+        // target: 'http://localhost:9001/',
         changeOrigin: true,
       }
     },

@@ -4,7 +4,7 @@ import App from './App.vue'
 import router from './router'
 import El from 'element-plus'
 import 'element-plus/dist/index.css'
-import SgAdm, { SpacegateService as SgSrv, MESSAGES } from '@components/config'
+import SgAdm, { SpacegateService as SgSrv, LOCALES } from '@components/config'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
@@ -13,7 +13,23 @@ import { createI18n } from 'vue-i18n'
 let i18n = createI18n({
     legacy: false,
     locale: 'zh-CN',
-    messages: MESSAGES
+    messages: {
+        'zh-CN': {
+            menu: {
+                "router": "路由",
+                "gateway": "网关"
+            },
+            ...LOCALES['zh-CN'],
+        },
+        'en': {
+            menu: {
+                "router": "router",
+                "gateway": "gateway"
+            },
+            ...LOCALES['en'],
+        }
+        
+    }
 })
 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
@@ -22,10 +38,8 @@ self.MonacoEnvironment = {
     getWorker(_, label) {
         if (label === 'json') {
             let worker = new jsonWorker();
-            console.debug('json worker created', worker)
             return worker;
         } else {
-            console.debug(`could not found worker with label ${label}, fallback to editor worker`)
             return new editorWorker();
         }
     },
