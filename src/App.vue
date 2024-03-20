@@ -47,7 +47,7 @@ function toPage(pageName: string) {
 
 <template>
   <el-container class="h-screen w-screen">
-    <el-aside class="min-h-screen w-auto flex flex-shrink ">
+    <el-aside class="min-h-screen w-auto flex">
       <Menu :collapse="isMenuCollapse" :current-page="currentPage" :pages="pages" @to-page="toPage" class="w-full" />
     </el-aside>
     <el-container class="flex-grow">
