@@ -15,7 +15,7 @@
         </el-menu-item-group>
     </el-menu>
 </template>
-f
+
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n'
