@@ -10,12 +10,12 @@ export default defineConfig({
     port: 4000,
     proxy: {
       '/config': {
-        // target: 'http://172.30.87.55:9080/',
+        // target: 'http://172.30.87.38:9080/',
         target: 'http://localhost:9080/',
         changeOrigin: true,
       },
       '/plugin': {
-        // target: 'http://172.30.87.55:9080/',
+        // target: 'http://172.30.87.38:9080/',
         target: 'http://localhost:9080/',
         changeOrigin: true,
       }

@@ -29,6 +29,7 @@ const isMenuCollapse = ref(false)
 const pages = [
   { name: t('menu.gateway'), path: '/gateway', icon: GatewayIcon },
   { name: t('menu.router'), path: '/route', icon: RouterIcon },
+  { name: t('menu.plugin'), path: '/plugins', icon: RouterIcon },
 ]
 const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 const gatewayName = ref<string>()
