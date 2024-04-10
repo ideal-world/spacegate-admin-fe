@@ -9,16 +9,12 @@ export default defineConfig({
   server: {
     port: 4000,
     proxy: {
-      '/config': {
+      '/api': {
         // target: 'http://172.30.87.38:9080/',
         target: 'http://localhost:9080/',
         changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '')
       },
-      '/plugin': {
-        // target: 'http://172.30.87.38:9080/',
-        target: 'http://localhost:9080/',
-        changeOrigin: true,
-      }
     },
     hmr: {
       overlay: false

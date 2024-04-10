@@ -22,7 +22,7 @@
     "vue-i18n": "^9.11.0",
     "vue-router": "^4.3.0",
     "@components/config": "file:components/config",
-    "spacegate-admin-client": "0.2.0-alpha.8"
+    "spacegate-admin-client": "0.2.0-alpha.11"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.6.2",
