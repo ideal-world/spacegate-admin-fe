@@ -86,7 +86,7 @@ function toPage(pageName: string) {
       </el-main>
       <el-footer class="flex justify-center align-center items-center">
         <div class="container mx-auto flex justify-center">
-          <p class="text-center text-sm text-gray-500">&copy; 2023 Ideal World</p>
+          <p class="text-center text-sm text-gray-500">&copy; 2024 Ideal World</p>
         </div>
       </el-footer>
     </el-container>

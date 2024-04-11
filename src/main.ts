@@ -4,8 +4,9 @@ import App from './App.vue'
 import router from './router'
 import El from 'element-plus'
 import 'element-plus/dist/index.css'
-import SgAdm, { SpacegateService as SgSrv, LOCALES } from '@components/config'
-import { Api }  from 'spacegate-admin-client'
+import SgAdm, { SpacegateService as SgSrv } from '@components/config'
+import { LOCALES } from './locales'
+import { Api } from 'spacegate-admin-client'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
@@ -14,23 +15,7 @@ import { createI18n } from 'vue-i18n'
 let i18n = createI18n({
     legacy: false,
     locale: 'zh-CN',
-    messages: {
-        'zh-CN': {
-            menu: {
-                "router": "路由",
-                "gateway": "网关"
-            },
-            ...LOCALES['zh-CN'],
-        },
-        'en': {
-            menu: {
-                "router": "router",
-                "gateway": "gateway"
-            },
-            ...LOCALES['en'],
-        }
-
-    }
+    messages: LOCALES
 })
 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
