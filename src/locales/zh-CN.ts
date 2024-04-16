@@ -33,6 +33,7 @@ export default {
     "method": "方法",
     "matchAll": "匹配全部",
     "matches": "匹配",
+    "matchAndRewrite": "匹配与重写",
     "backends": "后端",
     "timeout": "超时",
     "protocol": "协议",
@@ -79,5 +80,6 @@ export default {
     "duplicatedGatewayName": "重复的网关名称。",
     "selectAnInstance": "选择一个实例",
     "createAnInstance": "创建一个实例",
+    "rewriteTo": "重写为"
   }
 }
