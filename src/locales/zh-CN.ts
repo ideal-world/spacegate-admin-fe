@@ -5,6 +5,9 @@ export default {
     "plugin": "插件",
   },
   "label": {
+    "file": "文件",
+    "username": "用户名",
+    "password": "密码",
     "k8sService": "k8s服务",
     "host": "主机",
     "name": "名称",
@@ -53,6 +56,7 @@ export default {
     "editRoute": "编辑路由",
   },
   "button": {
+    "login": "登录",
     "save": "保存",
     "clipboard": "剪贴板",
     "file": "文件",
@@ -73,6 +77,7 @@ export default {
     "edit": "编辑",
   },
   "hint": {
+    "needLogin": "需要登录",
     "chooseASource": "选择一个来源",
     "chooseATarget": "选择一个目标",
     "confirmDeleteGateway": "确认删除这个网关？",
