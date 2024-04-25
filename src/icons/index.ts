@@ -5,6 +5,7 @@ import RouterIcon from './Router.vue'
 import CertIcon from './Certificate.vue'
 import GatewayIcon from './Gateway.vue'
 import Github from './Github.vue'
+import Puzzle from './Puzzle.vue'
 export {
     Lang,
     PluginIcon,
@@ -12,5 +13,6 @@ export {
     RouterIcon,
     CertIcon,
     GatewayIcon,
-    Github
+    Github,
+    Puzzle
 }

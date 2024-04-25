@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue';
+import { ref, provide, onMounted, onUnmounted, computed } from 'vue';
 import Menu from './components/Menu.vue'
 import Header from './components/Header.vue'
 import { useRouter } from 'vue-router'
@@ -10,10 +10,12 @@ import {
   RouterIcon,
   GatewayIcon,
   Github,
+  Puzzle
 } from './icons'
 import { useI18n } from 'vue-i18n'
 import { GATEWAY_NAME_SYMBOL } from './consts';
-const { locale } = useI18n()
+import { Api } from 'spacegate-admin-client';
+const { locale, t } = useI18n()
 const router = useRouter()
 const langs = [
   {
@@ -29,7 +31,7 @@ const isMenuCollapse = ref(false)
 const pages = [
   { name: 'menu.gateway', path: '/gateway', icon: GatewayIcon },
   { name: 'menu.router', path: '/route', icon: RouterIcon },
-  { name: 'menu.plugin', path: '/plugins', icon: RouterIcon },
+  { name: 'menu.plugin', path: '/plugins', icon: Puzzle },
 ]
 const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 const gatewayName = ref<string>()
@@ -42,7 +44,42 @@ function toPage(pageName: string) {
     router.push(page.path)
   }
 }
+const instanceOnline = ref<null | boolean>(null);
+const healthCheckIntervalHandle = ref<number>(undefined);
+const instanceStatus = computed(() => {
+  if (instanceOnline.value === null) {
+    return 'info'
+  } else if (instanceOnline.value) {
+    return 'success'
+  } else {
+    return 'danger'
+  }
+});
+const instanceStatusText = computed(() => {
+  if (instanceOnline.value === null) {
+    return t('hint.unreachable')
+  } else if (instanceOnline.value) {
+    return t('hint.online')
+  } else {
+    return t('hint.offline')
+  }
+});
+onMounted(
+  () => {
+    healthCheckIntervalHandle.value = setInterval(async () => {
+      try {
+        let health = await Api.instanceHealth();
+        instanceOnline.value = health.data;
+      } catch (e) {
+        instanceOnline.value = null;
+      }
+    }, 5000);
 
+  }
+)
+onUnmounted(() => {
+  if (healthCheckIntervalHandle.value) clearInterval(healthCheckIntervalHandle.value);
+})
 
 </script>
 
@@ -56,7 +93,9 @@ function toPage(pageName: string) {
         <Header>
           <template #left>
             <el-button circle text size="large" :icon="isMenuCollapse ? Expand : Fold"
-            @click="isMenuCollapse = !isMenuCollapse"></el-button>
+              @click="isMenuCollapse = !isMenuCollapse"></el-button>
+            <el-button class="mx-1" text disabled :type="instanceStatus
+              ">●{{ instanceStatusText }}</el-button>
             <SelectGateway v-model="gatewayName" />
           </template>
           <template #right>

@@ -85,6 +85,9 @@ export default {
     "duplicatedGatewayName": "Duplicated gateway name.",
     "selectAnInstance": "Select an instance",
     "createAnInstance": "Create an instance",
-    "rewriteTo": "Rewrite to"
+    "rewriteTo": "Rewrite to",
+    "unreachable": "unreachable",
+    "online": "online",
+    "offline": "offline",
   }
 }

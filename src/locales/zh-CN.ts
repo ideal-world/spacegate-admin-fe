@@ -85,6 +85,9 @@ export default {
     "duplicatedGatewayName": "重复的网关名称。",
     "selectAnInstance": "选择一个实例",
     "createAnInstance": "创建一个实例",
-    "rewriteTo": "重写为"
+    "rewriteTo": "重写为",
+    "unreachable": "不可达",
+    "online": "在线",
+    "offline": "离线",
   }
 }
