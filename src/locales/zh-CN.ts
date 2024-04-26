@@ -75,6 +75,8 @@ export default {
     "new": "新建",
     "refresh": "刷新",
     "edit": "编辑",
+    "discover": "发现",
+    "confirm": "确认"
   },
   "hint": {
     "needLogin": "需要登录",
@@ -89,5 +91,6 @@ export default {
     "unreachable": "不可达",
     "online": "在线",
     "offline": "离线",
+    "selectBackend": "选择后端",
   }
 }

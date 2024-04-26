@@ -75,6 +75,8 @@ export default {
     "new": "New",
     "refresh": "Refresh",
     "edit": "Edit",
+    "discover": "Discover",
+    "confirm": "Confirm"
   },
   "hint": {
     "needLogin": "Login required",
@@ -89,5 +91,6 @@ export default {
     "unreachable": "unreachable",
     "online": "online",
     "offline": "offline",
+    "selectBackend": "Select a backend",
   }
 }
