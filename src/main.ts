@@ -37,7 +37,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 Api.setClient({
     baseURL: '/api',
 });
-Api.Client.axiosInstance.interceptors.response.use(
+Api.getClient().axiosInstance.interceptors.response.use(
     (resp) => resp,
     (error) => {
         if (error instanceof Api.ExceptionUnauthorized) {

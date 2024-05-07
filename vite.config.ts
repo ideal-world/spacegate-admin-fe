@@ -29,7 +29,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: [
-      '@components/config'
+      '@components/config',
+      'spacegate-admin-client'
     ]
   }
 })
