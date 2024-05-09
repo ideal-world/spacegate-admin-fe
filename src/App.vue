@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, provide, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import Menu from './components/Menu.vue'
 import Header from './components/Header.vue'
 import { useRouter } from 'vue-router'
@@ -13,7 +13,6 @@ import {
   Puzzle
 } from './icons'
 import { useI18n } from 'vue-i18n'
-import { GATEWAY_NAME_SYMBOL } from './consts';
 import { Api } from 'spacegate-admin-client';
 const { locale, t } = useI18n()
 const router = useRouter()
@@ -35,13 +34,25 @@ const pages = [
 ]
 const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 const gatewayName = ref<string>()
-provide(GATEWAY_NAME_SYMBOL, gatewayName)
+watch([gatewayName, currentPage], async ([newGatewayName, _page]) => {
+  if (newGatewayName) {
+    await router.replace({ query: { gatewayName: newGatewayName } });
+  }
+})
+watch(() => router.currentRoute.value.query['gatewayName'], (newValue) => {
+  if(typeof newValue === 'string') {
+    gatewayName.value = newValue
+  }
+})
 function toPage(pageName: string) {
   let page = pages.find(p => p.path === pageName);
   if (!page) {
     return
   } else {
-    router.push(page.path)
+    router.push({
+      path: page.path,
+      query: { gatewayName: gatewayName.value }
+    })
   }
 }
 const instanceOnline = ref<null | boolean>(null);
