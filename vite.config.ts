@@ -15,6 +15,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, '')
       },
+      // '/api': {
+      //   target: 'http://172.30.87.41:9080/',
+      //   changeOrigin: true,
+      //   rewrite: path => path
+      // },
     },
     hmr: {
       overlay: false
