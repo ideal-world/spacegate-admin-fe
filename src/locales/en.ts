@@ -54,6 +54,7 @@ export default {
     "editPlugin": "Edit Plugin",
     "createRoute": "Create Route",
     "editRoute": "Edit Route",
+    "setting": "Setting"
   },
   "button": {
     "login": "Login",

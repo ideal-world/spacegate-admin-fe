@@ -54,6 +54,7 @@ export default {
     "editPlugin": "编辑插件",
     "createRoute": "新建路由",
     "editRoute": "编辑路由",
+    "setting": "配置"
   },
   "button": {
     "login": "登录",

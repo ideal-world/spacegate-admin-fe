@@ -1,7 +1,7 @@
 <template>
     <el-menu :collapse="props.collapse" :default-active="pageIndex">
         <el-menu-item-group>
-            <template slot="title">{{ t('common.setting') }}</template>
+            <template slot="title">{{ t('title.setting') }}</template>
             <el-menu-item v-for="page, index in props.pages" :index="index.toString()" @click="() => {
                 emits('toPage', page.path)
             }">
