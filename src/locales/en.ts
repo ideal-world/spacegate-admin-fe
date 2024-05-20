@@ -47,7 +47,8 @@ export default {
     "logLevel": "Log Level",
     "lang": "Language",
     "ignoreTlsVerification": "Ignore TLS Verification",
-    "instance": "Instance"
+    "instance": "Instance",
+    "enbaleXRequestId": "Enable x-request-id"
   },
   "title": {
     "newPlugin": "New Plugin",

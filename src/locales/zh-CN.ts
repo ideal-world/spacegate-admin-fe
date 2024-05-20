@@ -47,7 +47,8 @@ export default {
     "logLevel": "日志级别",
     "lang": "语言",
     "ignoreTlsVerification": "忽略TLS验证",
-    "instance": "实例"
+    "instance": "实例",
+    "enableXRequestId": "启用x-request-id",
   },
   "title": {
     "newPlugin": "新建插件",

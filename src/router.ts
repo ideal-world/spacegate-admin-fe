@@ -1,18 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Gateway from './views/Gateway.vue'
-import Route from './views/Route.vue'
-import Plugin from './views/Plugin.vue'
-
 const routes = [
-    { path: '/', component: Gateway },
-    { path: '/gateway', component: Gateway },
-    { path: '/route', component: Route },
-    { path: '/plugins', component: Plugin },
+  { path: '/', component: () => import('./views/Gateway.vue') },
+  { path: '/gateway', component: () => import('./views/Gateway.vue') },
+  { path: '/route', component: () => import('./views/Route.vue') },
+  { path: '/plugins', component: () => import('./views/Plugin.vue') },
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHistory(),
+  routes
 })
 
 export default router
