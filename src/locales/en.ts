@@ -48,7 +48,8 @@ export default {
     "lang": "Language",
     "ignoreTlsVerification": "Ignore TLS Verification",
     "instance": "Instance",
-    "enbaleXRequestId": "Enable x-request-id"
+    "enbaleXRequestId": "Enable x-request-id",
+    "http2Downgrade": "HTTP2 Downgrade",
   },
   "title": {
     "newPlugin": "New Plugin",
@@ -94,5 +95,11 @@ export default {
     "online": "online",
     "offline": "offline",
     "selectBackend": "Select a backend",
+  },
+  "placeholder": {
+    "serviceName": "Service Name",
+    "serviceNamespace": "Service Namespace",
+    "path": "Path",
+    "timeout": "Timeout"
   }
 }

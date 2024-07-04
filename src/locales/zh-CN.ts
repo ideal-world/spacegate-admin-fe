@@ -49,6 +49,7 @@ export default {
     "ignoreTlsVerification": "忽略TLS验证",
     "instance": "实例",
     "enableXRequestId": "启用x-request-id",
+    "http2Downgrade": "HTTP2降级",
   },
   "title": {
     "newPlugin": "新建插件",
@@ -94,5 +95,11 @@ export default {
     "online": "在线",
     "offline": "离线",
     "selectBackend": "选择后端",
+  },
+  "placeholder": {
+    "serviceName": "服务名",
+    "serviceNamespace": "命名空间",
+    "path": "路径",
+    "timeout": "超时"
   }
 }
