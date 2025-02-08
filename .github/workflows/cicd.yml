@@ -31,7 +31,7 @@ jobs:
         run: tar -czvf ${{ env.FRONTEND_ARTIFACT_NAME }}.tar.gz dist
 
       - name: Archive front artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.FRONTEND_ARTIFACT_NAME }}
           path: ${{ env.FRONTEND_ARTIFACT_NAME }}.tar.gz
