@@ -50,6 +50,7 @@ export default {
     "instance": "Instance",
     "enbaleXRequestId": "Enable x-request-id",
     "http2Downgrade": "HTTP2 Downgrade",
+    "health": "health"
   },
   "title": {
     "newPlugin": "New Plugin",

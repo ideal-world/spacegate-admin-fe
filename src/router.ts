@@ -4,6 +4,7 @@ const routes = [
   { path: '/gateway', component: () => import('./views/Gateway.vue') },
   { path: '/route', component: () => import('./views/Route.vue') },
   { path: '/plugins', component: () => import('./views/Plugin.vue') },
+  { path: '/instance', component: () => import('./views/Instance.vue') },
 ]
 
 const router = createRouter({

@@ -3,6 +3,7 @@ export default {
     "router": "路由",
     "gateway": "网关",
     "plugin": "插件",
+    "instance": "实例",
   },
   "label": {
     "file": "文件",
@@ -50,13 +51,16 @@ export default {
     "instance": "实例",
     "enableXRequestId": "启用x-request-id",
     "http2Downgrade": "HTTP2降级",
+    "health": "健康",
+    "operation": "操作",
   },
   "title": {
     "newPlugin": "新建插件",
     "editPlugin": "编辑插件",
     "createRoute": "新建路由",
     "editRoute": "编辑路由",
-    "setting": "配置"
+    "setting": "配置",
+    "gatewayReload": "网关重载",
   },
   "button": {
     "login": "登录",
@@ -79,7 +83,9 @@ export default {
     "refresh": "刷新",
     "edit": "编辑",
     "discover": "发现",
-    "confirm": "确认"
+    "confirm": "确认",
+    "globalReload": "全局重载",
+    "gatewayReload": "网关重载",
   },
   "hint": {
     "needLogin": "需要登录",
@@ -95,6 +101,8 @@ export default {
     "online": "在线",
     "offline": "离线",
     "selectBackend": "选择后端",
+    "selectGateway": "选择网关",
+    "currentInstance": "当前实例"
   },
   "placeholder": {
     "serviceName": "服务名",

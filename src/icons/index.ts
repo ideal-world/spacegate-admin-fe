@@ -6,6 +6,7 @@ import CertIcon from './Certificate.vue'
 import GatewayIcon from './Gateway.vue'
 import Github from './Github.vue'
 import Puzzle from './Puzzle.vue'
+import Instance from './Instance.vue'
 export {
     Lang,
     PluginIcon,
@@ -14,5 +15,6 @@ export {
     CertIcon,
     GatewayIcon,
     Github,
-    Puzzle
+    Puzzle,
+    Instance
 }

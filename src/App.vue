@@ -10,7 +10,8 @@ import {
   RouterIcon,
   GatewayIcon,
   Github,
-  Puzzle
+  Puzzle,
+  Instance
 } from './icons'
 import { useI18n } from 'vue-i18n'
 import { Api } from 'spacegate-admin-client';
@@ -31,6 +32,7 @@ const pages = [
   { name: 'menu.gateway', path: '/gateway', icon: GatewayIcon },
   { name: 'menu.router', path: '/route', icon: RouterIcon },
   { name: 'menu.plugin', path: '/plugins', icon: Puzzle },
+  { name: 'menu.instance', path: '/instance', icon: Instance },
 ]
 const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 const gatewayName = ref<string>()
@@ -55,34 +57,49 @@ function toPage(pageName: string) {
     })
   }
 }
-const instanceOnline = ref<null | boolean>(null);
+const instanceOnlineCount = ref<number>(0);
+const instanceCount = ref<number>(0);
 const healthCheckIntervalHandle = ref<number>(undefined);
 const instanceStatus = computed(() => {
-  if (instanceOnline.value === null) {
+  if (instanceCount.value === 0) {
     return 'info'
-  } else if (instanceOnline.value) {
+  } else if (instanceOnlineCount.value === 0) {
+    return 'danger'
+  } else if (instanceOnlineCount.value === instanceCount.value) {
     return 'success'
   } else {
-    return 'danger'
+    return 'warning'
   }
 });
-const instanceStatusText = computed(() => {
-  if (instanceOnline.value === null) {
+/* const instanceStatusText = computed(() => {
+  if (instanceOnlineCount.value === null) {
     return t('hint.unreachable')
-  } else if (instanceOnline.value) {
+  } else if (instanceOnlineCount.value) {
     return t('hint.online')
   } else {
     return t('hint.offline')
   }
-});
+}); */
 onMounted(
   () => {
     healthCheckIntervalHandle.value = setInterval(async () => {
       try {
-        let health = await Api.instanceHealth();
-        instanceOnline.value = health.data;
+        let health = await Api.discoveryInstanceHealth();
+        console.log(health)
+        let totalCount = 0;
+        let healthyCount = 0;
+        for (const isHealthy of Object.values(health.data)) {
+          totalCount += 1;
+          if (isHealthy) {
+            healthyCount += 1;
+          }
+        }
+        console.log(totalCount, healthyCount)
+        instanceCount.value = totalCount;
+        instanceOnlineCount.value = healthyCount;
       } catch (e) {
-        instanceOnline.value = null;
+        instanceCount.value = 0;
+        instanceOnlineCount.value = 0;
       }
     }, 5000);
 
@@ -91,6 +108,7 @@ onMounted(
 onUnmounted(() => {
   if (healthCheckIntervalHandle.value) clearInterval(healthCheckIntervalHandle.value);
 })
+
 
 </script>
 
@@ -106,7 +124,7 @@ onUnmounted(() => {
             <el-button circle text size="large" :icon="isMenuCollapse ? Expand : Fold"
               @click="isMenuCollapse = !isMenuCollapse"></el-button>
             <el-button class="mx-1" text disabled :type="instanceStatus
-              ">●{{ instanceStatusText }}</el-button>
+              ">●{{ instanceOnlineCount }}/{{ instanceCount }}</el-button>
             <SelectGateway v-model="gatewayName" />
           </template>
           <template #right>
@@ -136,7 +154,7 @@ onUnmounted(() => {
       </el-main>
       <el-footer class="flex justify-center align-center items-center">
         <div class="container mx-auto flex justify-center">
-          <p class="text-center text-sm text-gray-500">&copy; 2024 Ideal World</p>
+          <p class="text-center text-sm text-gray-500">&copy; 2025 Ideal World</p>
         </div>
       </el-footer>
     </el-container>
