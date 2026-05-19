@@ -26,15 +26,19 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   resolve: {
+    dedupe: ['vue', 'vue-i18n', 'element-plus'],
     alias: {
       '@components/config': path.resolve(__dirname, './components/config'),
-      "@": path.resolve("./src")
+      '@': path.resolve('./src'),
     }
   },
   optimizeDeps: {
     include: [
       '@components/config',
-      'spacegate-admin-client'
+      'spacegate-admin-client',
+      'vue-i18n',
+      'nanoid',
+      'monaco-editor',
     ]
   }
 })

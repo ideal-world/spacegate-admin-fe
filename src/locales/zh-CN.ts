@@ -5,6 +5,10 @@ export default {
     "plugin": "插件",
     "instance": "实例",
   },
+  "tab": {
+    "nativePlugin": "原生插件",
+    "aiPlugin": "AI"
+  },
   "label": {
     "file": "文件",
     "username": "用户名",
@@ -60,6 +64,7 @@ export default {
     "createRoute": "新建路由",
     "editRoute": "编辑路由",
     "setting": "配置",
+    "createWasmPlugin": "新建 Wasm 插件",
     "gatewayReload": "网关重载",
   },
   "button": {
@@ -82,6 +87,7 @@ export default {
     "new": "新建",
     "refresh": "刷新",
     "edit": "编辑",
+    "back": "返回",
     "discover": "发现",
     "confirm": "确认",
     "globalReload": "全局重载",
@@ -102,7 +108,11 @@ export default {
     "offline": "离线",
     "selectBackend": "选择后端",
     "selectGateway": "选择网关",
-    "currentInstance": "当前实例"
+    "currentInstance": "当前实例",
+    "searchPlugin": "搜索插件",
+    "pluginMono": "单例插件，点击配置进入管理",
+    "deployed": "已部署",
+    "wasmInstance": "Wasm 插件实例"
   },
   "placeholder": {
     "serviceName": "服务名",

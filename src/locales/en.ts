@@ -4,6 +4,10 @@ export default {
     "gateway": "Gateway",
     "plugin": "Plugin",
   },
+  "tab": {
+    "nativePlugin": "Native Plugins",
+    "aiPlugin": "AI"
+  },
   "label": {
     "file": "File",
     "username": "Username",
@@ -57,7 +61,8 @@ export default {
     "editPlugin": "Edit Plugin",
     "createRoute": "Create Route",
     "editRoute": "Edit Route",
-    "setting": "Setting"
+    "setting": "Setting",
+    "createWasmPlugin": "New Wasm Plugin"
   },
   "button": {
     "login": "Login",
@@ -79,6 +84,7 @@ export default {
     "new": "New",
     "refresh": "Refresh",
     "edit": "Edit",
+    "back": "Back",
     "discover": "Discover",
     "confirm": "Confirm"
   },
@@ -96,6 +102,10 @@ export default {
     "online": "online",
     "offline": "offline",
     "selectBackend": "Select a backend",
+    "searchPlugin": "Search plugins",
+    "pluginMono": "Mono plugin — click Configure to manage",
+    "deployed": "Deployed",
+    "wasmInstance": "Wasm plugin instance"
   },
   "placeholder": {
     "serviceName": "Service Name",
