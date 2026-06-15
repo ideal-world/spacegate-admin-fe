@@ -1,10 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
-const routes = [
-  { path: '/', component: () => import('./views/Gateway.vue') },
-  { path: '/gateway', component: () => import('./views/Gateway.vue') },
-  { path: '/route', component: () => import('./views/Route.vue') },
-  { path: '/plugins', component: () => import('./views/Plugin.vue') },
-  { path: '/instance', component: () => import('./views/Instance.vue') },
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+
+const routes: RouteRecordRaw[] = [
+  { path: '/', redirect: '/overview' },
+  { path: '/overview', component: () => import('./views/Overview.vue') },
+  { path: '/gateways', component: () => import('./views/Gateways.vue') },
+  { path: '/gateway', redirect: '/gateways' },
+  { path: '/routes', component: () => import('./views/Routes.vue') },
+  { path: '/route', redirect: '/routes' },
+  { path: '/plugins', component: () => import('./views/Plugins.vue') },
+  { path: '/instances', component: () => import('./views/Instances.vue') },
+  { path: '/instance', redirect: '/instances' },
 ]
 
 const router = createRouter({

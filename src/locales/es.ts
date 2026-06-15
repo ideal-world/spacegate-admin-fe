@@ -11,7 +11,7 @@ export default {
         "k8sService": "k8s服务",
         "host": "主机",
         "name": "名称",
-        "code": "插件代码",
+        "code": "插件类型",
         "spec": "配置",
         "listeners": "监听",
         "parameters": "参数",
@@ -47,13 +47,15 @@ export default {
         "logLevel": "日志级别",
         "lang": "语言",
         "ignoreTlsVerification": "忽略TLS验证",
-        "instance": "实例"
+        "instance": "插件配置"
     },
     "title": {
-        "newPlugin": "新建插件",
-        "editPlugin": "编辑插件",
+        "newPlugin": "绑定插件",
+        "editPlugin": "编辑插件绑定",
         "createRoute": "新建路由",
         "editRoute": "编辑路由",
+        "setting": "配置",
+        "createWasmPlugin": "自定义 Wasm 插件配置",
     },
     "button": {
         "login": "登录",
@@ -63,7 +65,7 @@ export default {
         "upload": "上传",
         "download": "下载",
         "addListener": "添加监听",
-        "addPlugin": "添加插件",
+        "addPlugin": "绑定插件",
         "addRule": "添加规则",
         "addHost": "添加主机",
         "addBackend": "添加后端",
@@ -83,8 +85,8 @@ export default {
         "confirmDeleteGateway": "确认删除这个网关？",
         "missingGatewayName": "缺少网关名称。",
         "duplicatedGatewayName": "重复的网关名称。",
-        "selectAnInstance": "选择一个实例",
-        "createAnInstance": "创建一个实例",
+        "selectAnInstance": "引用插件配置",
+        "createAnInstance": "自定义插件配置",
         "rewriteTo": "重写为"
     }
 }

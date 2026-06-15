@@ -28,7 +28,7 @@ export default defineConfig({
   resolve: {
     dedupe: ['vue', 'vue-i18n', 'element-plus'],
     alias: {
-      '@components/config': path.resolve(__dirname, './components/config'),
+      '@components/config': path.resolve(__dirname, '../spacegate-admin-front/src'),
       '@': path.resolve('./src'),
     }
   },

@@ -1,0 +1,210 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { Api, Model } from 'spacegate-admin-client'
+import { Check, Delete, Edit, Plus, Refresh, View } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { GatewayForm } from '@components/config'
+import ActionBar from '../components/ActionBar.vue'
+import { cloneJson, listenerSummary, pluginCount } from './console-utils'
+
+const router = useRouter()
+const { locale } = useI18n()
+
+const loading = ref(false)
+const drawerOpen = ref(false)
+const drawerMode = ref<'create' | 'edit'>('create')
+const gateways = ref<Model.SgGateway[]>([])
+const formModel = ref<Model.SgGateway>(newGateway())
+const texts = computed(() => locale.value.startsWith('zh') ? {
+  loadFailed: '网关列表加载失败，请确认 admin-server 已启动',
+  missingName: '请输入网关名称',
+  saved: '网关已保存',
+  saveFailed: '网关保存失败',
+  confirmDelete: (name: string) => `确认删除网关 ${name}？`,
+  deleteTitle: '删除网关',
+  deleted: '网关已删除',
+  deleteFailed: '网关删除失败',
+  title: '网关管理',
+  subtitle: '管理网关、监听端口、协议、网关级插件和运行参数。',
+  refresh: '刷新',
+  create: '新建网关',
+  name: '名称',
+  listeners: '监听',
+  plugins: '插件',
+  operation: '操作',
+  routes: '路由',
+  edit: '编辑',
+  delete: '删除',
+  createTitle: '新建网关',
+  editTitle: '编辑网关',
+  cancel: '取消',
+  save: '保存',
+} : {
+  loadFailed: 'Gateway list failed to load. Check that admin-server is running.',
+  missingName: 'Enter a gateway name.',
+  saved: 'Gateway saved.',
+  saveFailed: 'Gateway save failed.',
+  confirmDelete: (name: string) => `Delete gateway ${name}?`,
+  deleteTitle: 'Delete Gateway',
+  deleted: 'Gateway deleted.',
+  deleteFailed: 'Gateway delete failed.',
+  title: 'Gateway Management',
+  subtitle: 'Manage gateways, listener ports, protocols, gateway-level plugins, and runtime parameters.',
+  refresh: 'Refresh',
+  create: 'Create Gateway',
+  name: 'Name',
+  listeners: 'Listeners',
+  plugins: 'Plugins',
+  operation: 'Actions',
+  routes: 'Routes',
+  edit: 'Edit',
+  delete: 'Delete',
+  createTitle: 'Create Gateway',
+  editTitle: 'Edit Gateway',
+  cancel: 'Cancel',
+  save: 'Save',
+})
+
+function newGateway(): Model.SgGateway {
+  return {
+    name: 'new-gateway',
+    parameters: {
+      redis_url: null,
+      log_level: null,
+      lang: null,
+      enable_x_request_id: false,
+      ignore_tls_verification: null,
+    },
+    listeners: [
+      {
+        name: 'http',
+        ip: null,
+        port: 9000,
+        protocol: { type: 'http' },
+        hostname: null,
+      },
+    ],
+    plugins: [],
+  }
+}
+
+async function load() {
+  loading.value = true
+  try {
+    const names = (await Api.getConfigNames()).data
+    const loaded = await Promise.all(names.map(async (name) => (await Api.getConfigItemGateway(name)).data))
+    gateways.value = loaded.filter((item): item is Model.SgGateway => item != null)
+  } catch {
+    gateways.value = []
+    ElMessage.warning(texts.value.loadFailed)
+  } finally {
+    loading.value = false
+  }
+}
+
+function openCreate() {
+  drawerMode.value = 'create'
+  formModel.value = newGateway()
+  drawerOpen.value = true
+}
+
+function openEdit(gateway: Model.SgGateway) {
+  drawerMode.value = 'edit'
+  formModel.value = cloneJson(gateway)
+  drawerOpen.value = true
+}
+
+async function save() {
+  if (!formModel.value.name?.trim()) {
+    ElMessage.warning(texts.value.missingName)
+    return
+  }
+  try {
+    if (drawerMode.value === 'create') {
+      await Api.postConfigItemGateway(formModel.value.name, formModel.value)
+    } else {
+      await Api.putConfigItemGateway(formModel.value.name, formModel.value)
+    }
+    ElMessage.success(texts.value.saved)
+    drawerOpen.value = false
+    await load()
+  } catch {
+    ElMessage.error(texts.value.saveFailed)
+  }
+}
+
+async function remove(gateway: Model.SgGateway) {
+  try {
+    await ElMessageBox.confirm(texts.value.confirmDelete(gateway.name), texts.value.deleteTitle, {
+      confirmButtonClass: 'el-button--danger',
+    })
+    await Api.deleteConfigItemGateway(gateway.name)
+    ElMessage.success(texts.value.deleted)
+    await load()
+  } catch (error) {
+    if (error === 'cancel' || error === 'close') return
+    ElMessage.error(texts.value.deleteFailed)
+  }
+}
+
+function viewRoutes(gateway: Model.SgGateway) {
+  router.push({ path: '/routes', query: { gatewayName: gateway.name } })
+}
+
+onMounted(load)
+</script>
+
+<template>
+  <div class="console-page">
+    <div class="page-heading">
+      <div>
+        <h1>{{ texts.title }}</h1>
+        <p>{{ texts.subtitle }}</p>
+      </div>
+      <div class="page-actions">
+        <el-button :icon="Refresh" @click="load">{{ texts.refresh }}</el-button>
+        <el-button type="primary" :icon="Plus" @click="openCreate">{{ texts.create }}</el-button>
+      </div>
+    </div>
+
+    <section class="panel">
+      <el-table v-loading="loading" :data="gateways" row-key="name">
+        <el-table-column prop="name" :label="texts.name" min-width="180" />
+        <el-table-column :label="texts.listeners" min-width="260">
+          <template #default="{ row }">{{ listenerSummary(row) }}</template>
+        </el-table-column>
+        <el-table-column :label="texts.plugins" width="100">
+          <template #default="{ row }">{{ pluginCount(row.plugins) }}</template>
+        </el-table-column>
+        <el-table-column label="Redis" min-width="180">
+          <template #default="{ row }">{{ row.parameters?.redis_url || '-' }}</template>
+        </el-table-column>
+        <el-table-column :label="texts.operation" width="220" fixed="right">
+          <template #default="{ row }">
+            <ActionBar>
+              <el-button :icon="View" link @click="viewRoutes(row)">{{ texts.routes }}</el-button>
+              <el-button :icon="Edit" type="primary" link @click="openEdit(row)">{{ texts.edit }}</el-button>
+              <el-button :icon="Delete" type="danger" link @click="remove(row)">{{ texts.delete }}</el-button>
+            </ActionBar>
+          </template>
+        </el-table-column>
+      </el-table>
+    </section>
+
+    <el-drawer v-model="drawerOpen" :size="'72%'" destroy-on-close>
+      <template #header>
+        <div class="drawer-title">
+          <span>{{ drawerMode === 'create' ? texts.createTitle : texts.editTitle }}</span>
+          <el-tag>{{ formModel.name }}</el-tag>
+        </div>
+      </template>
+      <GatewayForm v-model="formModel" :mode="drawerMode" />
+      <template #footer>
+        <el-button @click="drawerOpen = false">{{ texts.cancel }}</el-button>
+        <el-button type="primary" :icon="Check" @click="save">{{ texts.save }}</el-button>
+      </template>
+    </el-drawer>
+  </div>
+</template>
