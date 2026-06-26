@@ -2,17 +2,19 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Api } from 'spacegate-admin-client'
-import { Refresh } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { Delete, Refresh } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { PluginPanel } from '@components/config'
 
 const loading = ref(false)
 const { locale } = useI18n()
+
 type PluginInstanceRow = {
   code: string
   kind: string
   name?: string
   uid?: string
+  spec?: unknown
 }
 
 const pluginInstances = ref<PluginInstanceRow[]>([])
@@ -28,6 +30,12 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   pluginType: '插件类型',
   configName: '配置名称',
   type: '类型',
+  operation: '操作',
+  delete: '删除',
+  confirmDelete: (label: string) => `确认删除插件配置「${label}」？`,
+  deleteTitle: '删除插件配置',
+  deleted: '插件配置已删除',
+  deleteFailed: '插件配置删除失败',
   aiTitle: 'AI 网关建议',
   aiDesc: '参考常见 AI Gateway 控制台，优先补齐治理闭环。',
   aiCapabilities: [
@@ -48,6 +56,12 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   pluginType: 'Plugin Type',
   configName: 'Configuration',
   type: 'Type',
+  operation: 'Actions',
+  delete: 'Delete',
+  confirmDelete: (label: string) => `Delete plugin config "${label}"?`,
+  deleteTitle: 'Delete Plugin Config',
+  deleted: 'Plugin config deleted.',
+  deleteFailed: 'Failed to delete plugin config.',
   aiTitle: 'AI Gateway Suggestions',
   aiDesc: 'Prioritize the governance loop based on common AI Gateway consoles.',
   aiCapabilities: [
@@ -76,6 +90,21 @@ function instanceLabel(item: PluginInstanceRow) {
   return item.uid
 }
 
+async function removePlugin(item: PluginInstanceRow) {
+  const label = `${item.code} / ${instanceLabel(item)}`
+  try {
+    await ElMessageBox.confirm(texts.value.confirmDelete(label), texts.value.deleteTitle, {
+      confirmButtonClass: 'el-button--danger',
+    })
+    await Api.deleteConfigPlugin(item as any)
+    ElMessage.success(texts.value.deleted)
+    await load()
+  } catch (error) {
+    if (error === 'cancel' || error === 'close') return
+    ElMessage.error(texts.value.deleteFailed)
+  }
+}
+
 onMounted(load)
 
 </script>
@@ -98,7 +127,7 @@ onMounted(load)
               <p>{{ texts.marketDesc }}</p>
           </div>
         </div>
-        <PluginPanel />
+        <PluginPanel @changed="load" />
       </section>
 
       <div class="side-stack">
@@ -115,6 +144,13 @@ onMounted(load)
               <template #default="{ row }">{{ instanceLabel(row) }}</template>
             </el-table-column>
             <el-table-column prop="kind" :label="texts.type" width="110" />
+            <el-table-column :label="texts.operation" width="100" fixed="right">
+              <template #default="{ row }">
+                <ActionBar>
+                  <el-button :icon="Delete" type="danger" link @click="removePlugin(row)">{{ texts.delete }}</el-button>
+                </ActionBar>
+              </template>
+            </el-table-column>
           </el-table>
         </section>
 

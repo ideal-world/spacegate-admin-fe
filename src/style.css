@@ -246,6 +246,18 @@ body {
 .action-bar .el-button {
   min-width: auto;
   padding: 0;
+  margin: 0;
+}
+
+.action-bar.instance-reload-actions {
+  justify-content: center;
+  min-height: 32px;
+}
+
+.action-bar.instance-reload-actions .el-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
 }
 
 .panel__header {
@@ -282,8 +294,13 @@ body {
 }
 
 .metric-card:hover {
-  border-color: #22c55e;
+  border-color: #14b8a6;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+.metric-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
 }
 
 .metric-card .el-icon {

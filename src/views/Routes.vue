@@ -49,6 +49,8 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   edit: '编辑',
   copy: '复制',
   delete: '删除',
+  emptyTitle: '暂无路由',
+  emptyDesc: '点击“新建路由”为当前网关添加匹配规则。',
 } : {
   loadGatewayFailed: 'Gateway list failed to load. Check that admin-server is running.',
   loadRouteFailed: 'Route list failed to load.',
@@ -75,6 +77,8 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   edit: 'Edit',
   copy: 'Copy',
   delete: 'Delete',
+  emptyTitle: 'No routes yet',
+  emptyDesc: 'Click “Create Route” to add a matching rule for this gateway.',
 })
 
 const gatewayName = computed(() => {
@@ -276,6 +280,11 @@ onMounted(async () => {
             </ActionBar>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :description="texts.emptyTitle">
+            <el-button type="primary" :icon="Plus" :disabled="!gatewayName" @click="openCreate">{{ texts.create }}</el-button>
+          </el-empty>
+        </template>
       </el-table>
     </section>
 

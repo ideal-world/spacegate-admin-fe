@@ -54,13 +54,8 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   backend: '后端',
   priority: '优先级',
   aiTitle: 'AI 网关治理待完善',
-  aiDesc: '参考常见 AI Gateway 后台，当前先保留清晰入口和能力边界。',
+  aiDesc: '模型目录、Key、Spend、Logs 等能力暂无后端 API，限流、认证、安全策略建议先通过插件配置承载。详细建议见插件中心。',
   viewPlugins: '查看插件',
-  aiGovernanceHints: [
-    '模型目录和 Provider 管理：后端 API 暂未提供，可先通过路由和插件承载。',
-    'Key、Spend、Usage、Logs：适合作为下一阶段观测和租户治理能力。',
-    '限流、认证、安全策略：建议优先沉淀为插件配置并挂载到路由或网关。',
-  ],
 } : {
   loadFailed: 'Overview data failed to load. Check that admin-server is running.',
   title: 'Overview',
@@ -91,13 +86,8 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   backend: 'Backend',
   priority: 'Priority',
   aiTitle: 'AI Gateway Governance Backlog',
-  aiDesc: 'Keep clear entry points and capability boundaries based on common AI Gateway consoles.',
+  aiDesc: 'Model catalog, keys, spend, and logs have no backend APIs yet. Rate limits, auth, and safety policies should be modeled as plugin configs for now. See Plugin Center for details.',
   viewPlugins: 'View Plugins',
-  aiGovernanceHints: [
-    'Model catalog and Provider management: backend APIs are not available yet; use Routes and Plugins for now.',
-    'Keys, Spend, Usage, and Logs: suitable for the next observability and tenant governance phase.',
-    'Rate limits, authentication, and safety policies: model them as plugin configurations and attach them to Routes or Gateways.',
-  ],
 })
 
 const onlineCount = computed(() => instances.value.filter((item) => item.healthy).length)
@@ -263,11 +253,6 @@ onMounted(load)
           <p>{{ texts.aiDesc }}</p>
         </div>
         <el-button @click="go('/plugins')">{{ texts.viewPlugins }}</el-button>
-      </div>
-      <div class="guidance-list guidance-list--inline">
-        <div v-for="item in texts.aiGovernanceHints" :key="item" class="guidance-item">
-          <span>{{ item }}</span>
-        </div>
       </div>
     </section>
   </div>

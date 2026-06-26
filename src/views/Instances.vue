@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Api } from 'spacegate-admin-client'
-import { Refresh, Switch } from '@element-plus/icons-vue'
+import { CopyDocument, Refresh, Switch } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import ActionBar from '../components/ActionBar.vue'
 
@@ -37,6 +37,10 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   operation: '操作',
   gatewayReload: '网关重载',
   globalReload: '全局重载',
+  emptyTitle: '暂无实例',
+  emptyDesc: '启动 spacegate 网关后，实例将自动注册到 admin-server。',
+  copied: (id: string) => `已复制 ${id}`,
+  reloadFor: '用于网关重载',
 } : {
   loadFailed: 'Instance status failed to load. Check that admin-server is running.',
   online: 'Online',
@@ -57,6 +61,10 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   operation: 'Actions',
   gatewayReload: 'Gateway Reload',
   globalReload: 'Global Reload',
+  emptyTitle: 'No instances yet',
+  emptyDesc: 'Start the spacegate gateway and instances will auto-register with admin-server.',
+  copied: (id: string) => `Copied ${id}`,
+  reloadFor: 'For gateway reload',
 })
 
 async function load() {
@@ -91,7 +99,9 @@ function statusText(status?: boolean) {
 async function reloadGlobal(instance: InstanceRow) {
   actionLoading.value = `global:${instance.id}`
   try {
-    await Api.discoveryInstanceReloadGlobal(instance.id)
+    await Api.getClient().axiosInstance.post('/discovery/instance/reload/global', undefined, {
+      params: { instance: instance.id },
+    })
     ElMessage.success(texts.value.globalReloadSuccess(instance.id))
   } catch {
     ElMessage.error(texts.value.globalReloadFailed(instance.id))
@@ -107,12 +117,26 @@ async function reloadGateway(instance: InstanceRow) {
   }
   actionLoading.value = `gateway:${instance.id}`
   try {
-    await Api.discoveryInstanceReloadGateway(instance.id, selectedGateway.value)
+    await Api.getClient().axiosInstance.post('/discovery/instance/reload/gateway', undefined, {
+      params: {
+        instance: instance.id,
+        gateway: selectedGateway.value,
+      },
+    })
     ElMessage.success(texts.value.gatewayReloadSuccess(instance.id))
   } catch {
     ElMessage.error(texts.value.gatewayReloadFailed(instance.id))
   } finally {
     actionLoading.value = ''
+  }
+}
+
+async function copyId(id: string) {
+  try {
+    await navigator.clipboard.writeText(id)
+    ElMessage.success(texts.value.copied(id))
+  } catch {
+    // silent
   }
 }
 
@@ -127,16 +151,26 @@ onMounted(load)
         <p>{{ texts.subtitle }}</p>
       </div>
       <div class="page-actions">
-        <el-select v-model="selectedGateway" class="page-gateway-select" :placeholder="texts.gatewayPlaceholder">
-          <el-option v-for="name in gatewayNames" :key="name" :label="name" :value="name" />
-        </el-select>
+        <div class="sg-console__selector">
+          <span class="sg-console__selector-label">{{ texts.reloadFor }}</span>
+          <el-select v-model="selectedGateway" class="page-gateway-select" :placeholder="texts.gatewayPlaceholder" style="width: 280px;">
+            <el-option v-for="name in gatewayNames" :key="name" :label="name" :value="name" />
+          </el-select>
+        </div>
         <el-button :icon="Refresh" @click="load">{{ texts.refresh }}</el-button>
       </div>
     </div>
 
     <section class="panel">
       <el-table v-loading="loading" :data="instances" row-key="id">
-        <el-table-column prop="id" :label="texts.instanceId" min-width="220" />
+        <el-table-column :label="texts.instanceId" min-width="220">
+          <template #default="{ row }">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <code>{{ row.id }}</code>
+              <el-button :icon="CopyDocument" text size="small" @click="copyId(row.id)" />
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column :label="texts.controlApi" min-width="180">
           <template #default="{ row }">
             <code>http://{{ row.id }}</code>
@@ -147,13 +181,13 @@ onMounted(load)
             <el-tag :type="statusType(row.healthy)">{{ statusText(row.healthy) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="texts.operation" width="240" fixed="right">
+        <el-table-column :label="texts.operation" width="240" fixed="right" align="center" header-align="center">
           <template #default="{ row }">
-            <ActionBar>
+            <ActionBar class="instance-reload-actions">
               <el-button
                 :icon="Switch"
                 type="warning"
-                link
+                size="small"
                 :loading="actionLoading === `gateway:${row.id}`"
                 @click="reloadGateway(row)"
               >
@@ -161,7 +195,7 @@ onMounted(load)
               </el-button>
               <el-button
                 type="danger"
-                link
+                size="small"
                 :loading="actionLoading === `global:${row.id}`"
                 @click="reloadGlobal(row)"
               >
@@ -170,6 +204,9 @@ onMounted(load)
             </ActionBar>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :description="texts.emptyTitle" />
+        </template>
       </el-table>
     </section>
   </div>

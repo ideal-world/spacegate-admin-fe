@@ -17,6 +17,7 @@ export default {
     "k8sService": "K8s Service",
     "host": "Host",
     "name": "Name",
+    "pluginInstanceName": "Plugin Instance Name",
     "code": "Plugin Type",
     "spec": "Configuration",
     "listeners": "Listeners",
@@ -113,7 +114,8 @@ export default {
     "searchPlugin": "Search plugins",
     "pluginMono": "Mono plugin — click Configure to manage",
     "deployed": "Deployed",
-    "wasmInstance": "Wasm plugin instance"
+    "wasmInstance": "Wasm plugin instance",
+    "requiredFieldsMissing": "Please fill in all required fields"
   },
   "placeholder": {
     "serviceName": "Service Name",

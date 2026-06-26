@@ -17,6 +17,7 @@ export default {
     "k8sService": "k8s服务",
     "host": "主机",
     "name": "名称",
+    "pluginInstanceName": "插件实例名称",
     "code": "插件类型",
     "spec": "配置",
     "listeners": "监听",
@@ -113,7 +114,8 @@ export default {
     "searchPlugin": "搜索插件",
     "pluginMono": "单例插件，点击配置进入管理",
     "deployed": "已部署",
-    "wasmInstance": "Wasm 插件实例"
+    "wasmInstance": "Wasm 插件实例",
+    "requiredFieldsMissing": "请填写所有必填字段"
   },
   "placeholder": {
     "serviceName": "服务名",

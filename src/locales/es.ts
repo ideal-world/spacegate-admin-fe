@@ -11,6 +11,7 @@ export default {
         "k8sService": "k8s服务",
         "host": "主机",
         "name": "名称",
+        "pluginInstanceName": "插件实例名称",
         "code": "插件类型",
         "spec": "配置",
         "listeners": "监听",

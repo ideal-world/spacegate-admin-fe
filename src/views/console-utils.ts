@@ -12,26 +12,44 @@ export function pluginCount(plugins?: unknown[] | null) {
 }
 
 export function routeMatchSummary(route?: Model.SgHttpRoute | null) {
-  const rule = route?.rules?.[0]
-  if (!rule) return 'match all'
-  if (rule.matches === null) return 'match all'
-  const match = rule.matches?.[0]
-  if (!match) return 'custom match'
-  if (match.path) return `${match.path.kind} ${match.path.value}`
-  if (match.method?.length) return match.method.join(', ')
-  if (match.header?.length) return `${match.header.length} header matches`
-  if (match.query?.length) return `${match.query.length} query matches`
-  return 'custom match'
+  const rules = route?.rules
+  if (!rules?.length) return 'match all'
+  const rule = rules[0]
+  let summary: string
+  if (rule.matches === null) {
+    summary = 'match all'
+  } else {
+    const match = rule.matches?.[0]
+    if (!match) {
+      summary = 'custom match'
+    } else if (match.path) {
+      summary = `${match.path.kind} ${match.path.value}`
+    } else if (match.method?.length) {
+      summary = match.method.join(', ')
+    } else if (match.header?.length) {
+      summary = `${match.header.length} header matches`
+    } else if (match.query?.length) {
+      summary = `${match.query.length} query matches`
+    } else {
+      summary = 'custom match'
+    }
+  }
+  if (rules.length > 1) summary += `  +${rules.length - 1} more rules`
+  return summary
 }
 
 export function backendSummary(route?: Model.SgHttpRoute | null) {
-  const backend = route?.rules?.find((rule) => rule.backends?.length)?.backends?.[0]
-  if (!backend) return '-'
-  const host = backend.host
-  if (host.kind === 'Host') return `${host.host}:${backend.port ?? 80}`
-  if (host.kind === 'K8sService') return `${host.name}.${host.namespace}:${backend.port ?? 80}`
-  if (host.kind === 'File') return host.path
-  return '-'
+  const allBackends = route?.rules?.flatMap((rule) => rule.backends ?? []) ?? []
+  if (!allBackends.length) return '-'
+  const first = allBackends[0]
+  const host = first.host
+  let label: string
+  if (host.kind === 'Host') label = `${host.host}:${first.port ?? 80}`
+  else if (host.kind === 'K8sService') label = `${host.name}.${host.namespace}:${first.port ?? 80}`
+  else if (host.kind === 'File') label = host.path
+  else label = '-'
+  if (allBackends.length > 1) label += `  +${allBackends.length - 1} more`
+  return label
 }
 
 export function hostnameSummary(route?: Model.SgHttpRoute | null) {

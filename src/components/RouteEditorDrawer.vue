@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Model } from 'spacegate-admin-client'
 import { Check, CopyDocument, Delete, Plus, Reading, Upload } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { PluginListForm } from '@components/config'
 
 const { locale } = useI18n()
@@ -25,6 +25,8 @@ const emit = defineEmits<{
 const activeTab = ref('basic')
 const activeRules = ref<string[]>(['0'])
 const jsonText = ref('')
+const isDirty = ref(false)
+let routeSnapshot = ''
 
 const texts = computed(() => locale.value.startsWith('zh') ? {
   keepOneRule: '至少保留一条规则',
@@ -121,6 +123,7 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   applyJson: '应用 JSON',
   cancel: '取消',
   save: '保存',
+  unsavedChanges: '有未保存的修改，确认放弃并关闭？',
 } : {
   keepOneRule: 'Keep at least one rule.',
   keepOneBackend: 'Each rule must keep at least one backend.',
@@ -216,6 +219,7 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   applyJson: 'Apply JSON',
   cancel: 'Cancel',
   save: 'Save',
+  unsavedChanges: 'You have unsaved changes. Discard and close?',
 })
 
 const drawerOpen = computed({
@@ -488,12 +492,31 @@ async function readClipboard() {
   }
 }
 
-watch(() => props.open, (open) => {
-  if (!open) return
+watch(() => props.open, async (open) => {
+  if (!open) {
+    isDirty.value = false
+    return
+  }
   activeTab.value = 'basic'
   normalizeRoute()
   syncJson()
+  await nextTick()
+  routeSnapshot = JSON.stringify(props.modelValue)
+  isDirty.value = false
 }, { immediate: true })
+
+watch(() => props.modelValue, () => {
+  if (!props.open) return
+  isDirty.value = JSON.stringify(props.modelValue) !== routeSnapshot
+}, { deep: true })
+
+function handleBeforeClose(done: () => void) {
+  if (!isDirty.value) { done(); return }
+  ElMessageBox.confirm(texts.value.unsavedChanges, '', {
+    confirmButtonText: locale.value.startsWith('zh') ? '确认' : 'Confirm',
+    cancelButtonText: locale.value.startsWith('zh') ? '取消' : 'Cancel',
+  }).then(() => { isDirty.value = false; done() }).catch(() => {})
+}
 
 watch(activeTab, (tab) => {
   if (tab === 'advanced') syncJson()
@@ -501,7 +524,7 @@ watch(activeTab, (tab) => {
 </script>
 
 <template>
-  <el-drawer v-model="drawerOpen" size="78%" destroy-on-close class="route-editor-drawer">
+  <el-drawer v-model="drawerOpen" size="78%" destroy-on-close class="route-editor-drawer" :before-close="handleBeforeClose">
     <template #header>
       <div class="drawer-title route-editor-drawer__title">
         <div>

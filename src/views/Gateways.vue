@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Api, Model } from 'spacegate-admin-client'
@@ -16,6 +16,7 @@ const loading = ref(false)
 const drawerOpen = ref(false)
 const drawerMode = ref<'create' | 'edit'>('create')
 const gateways = ref<Model.SgGateway[]>([])
+const routeCounts = ref<Record<string, number>>({})
 const formModel = ref<Model.SgGateway>(newGateway())
 const texts = computed(() => locale.value.startsWith('zh') ? {
   loadFailed: '网关列表加载失败，请确认 admin-server 已启动',
@@ -35,12 +36,16 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   plugins: '插件',
   operation: '操作',
   routes: '路由',
+  emptyTitle: '暂无网关',
+  emptyDesc: '点击右上角“新建网关”开始配置。',
+  deleteImpact: (count: number) => count > 0 ? `\n该网关下有 ${count} 条路由，将一并删除且不可恢复。` : '',
   edit: '编辑',
   delete: '删除',
   createTitle: '新建网关',
   editTitle: '编辑网关',
   cancel: '取消',
   save: '保存',
+  unsavedChanges: '有未保存的修改，确认放弃并关闭？',
 } : {
   loadFailed: 'Gateway list failed to load. Check that admin-server is running.',
   missingName: 'Enter a gateway name.',
@@ -59,12 +64,16 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   plugins: 'Plugins',
   operation: 'Actions',
   routes: 'Routes',
+  emptyTitle: 'No gateways yet',
+  emptyDesc: 'Click “Create Gateway” in the top right to get started.',
+  deleteImpact: (count: number) => count > 0 ? `\nThis gateway has ${count} route(s) that will also be deleted permanently.` : '',
   edit: 'Edit',
   delete: 'Delete',
   createTitle: 'Create Gateway',
   editTitle: 'Edit Gateway',
   cancel: 'Cancel',
   save: 'Save',
+  unsavedChanges: 'You have unsaved changes. Discard and close?',
 })
 
 function newGateway(): Model.SgGateway {
@@ -96,8 +105,14 @@ async function load() {
     const names = (await Api.getConfigNames()).data
     const loaded = await Promise.all(names.map(async (name) => (await Api.getConfigItemGateway(name)).data))
     gateways.value = loaded.filter((item): item is Model.SgGateway => item != null)
+    const counts: Record<string, number> = {}
+    await Promise.all(names.map(async (name) => {
+      try { counts[name] = (await Api.getConfigItemRouteNames(name)).data.length } catch { counts[name] = 0 }
+    }))
+    routeCounts.value = counts
   } catch {
     gateways.value = []
+    routeCounts.value = {}
     ElMessage.warning(texts.value.loadFailed)
   } finally {
     loading.value = false
@@ -108,12 +123,14 @@ function openCreate() {
   drawerMode.value = 'create'
   formModel.value = newGateway()
   drawerOpen.value = true
+  nextTick(() => { formSnapshot = JSON.stringify(formModel.value); isDirty.value = false })
 }
 
 function openEdit(gateway: Model.SgGateway) {
   drawerMode.value = 'edit'
   formModel.value = cloneJson(gateway)
   drawerOpen.value = true
+  nextTick(() => { formSnapshot = JSON.stringify(formModel.value); isDirty.value = false })
 }
 
 async function save() {
@@ -137,7 +154,9 @@ async function save() {
 
 async function remove(gateway: Model.SgGateway) {
   try {
-    await ElMessageBox.confirm(texts.value.confirmDelete(gateway.name), texts.value.deleteTitle, {
+    const count = routeCounts.value[gateway.name] ?? 0
+    const message = texts.value.confirmDelete(gateway.name) + texts.value.deleteImpact(count)
+    await ElMessageBox.confirm(message, texts.value.deleteTitle, {
       confirmButtonClass: 'el-button--danger',
     })
     await Api.deleteConfigItemGateway(gateway.name)
@@ -154,6 +173,22 @@ function viewRoutes(gateway: Model.SgGateway) {
 }
 
 onMounted(load)
+
+let formSnapshot = ''
+const isDirty = ref(false)
+
+watch(formModel, () => {
+  if (!drawerOpen.value) return
+  isDirty.value = JSON.stringify(formModel.value) !== formSnapshot
+}, { deep: true })
+
+function handleDrawerClose(done: () => void) {
+  if (!isDirty.value) { done(); return }
+  ElMessageBox.confirm(texts.value.unsavedChanges, '', {
+    confirmButtonText: locale.value.startsWith('zh') ? '确认' : 'Confirm',
+    cancelButtonText: locale.value.startsWith('zh') ? '取消' : 'Cancel',
+  }).then(() => { isDirty.value = false; done() }).catch(() => {})
+}
 </script>
 
 <template>
@@ -175,6 +210,9 @@ onMounted(load)
         <el-table-column :label="texts.listeners" min-width="260">
           <template #default="{ row }">{{ listenerSummary(row) }}</template>
         </el-table-column>
+        <el-table-column :label="texts.routes" width="100">
+          <template #default="{ row }">{{ routeCounts[row.name] ?? '-' }}</template>
+        </el-table-column>
         <el-table-column :label="texts.plugins" width="100">
           <template #default="{ row }">{{ pluginCount(row.plugins) }}</template>
         </el-table-column>
@@ -190,10 +228,15 @@ onMounted(load)
             </ActionBar>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :description="texts.emptyTitle">
+            <el-button type="primary" :icon="Plus" @click="openCreate">{{ texts.create }}</el-button>
+          </el-empty>
+        </template>
       </el-table>
     </section>
 
-    <el-drawer v-model="drawerOpen" :size="'72%'" destroy-on-close>
+    <el-drawer v-model="drawerOpen" :size="'72%'" destroy-on-close :before-close="handleDrawerClose">
       <template #header>
         <div class="drawer-title">
           <span>{{ drawerMode === 'create' ? texts.createTitle : texts.editTitle }}</span>
