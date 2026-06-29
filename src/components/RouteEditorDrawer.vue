@@ -790,7 +790,11 @@ watch(activeTab, (tab) => {
                     </el-col>
                   </el-row>
                   <el-form-item :label="texts.backendPlugins">
-                    <PluginListForm v-model="backend.plugins" />
+                    <PluginListForm
+                      v-model="backend.plugins"
+                      binding-scope="backend"
+                      :binding-name="`${routeModel.route_name}-rule-${ruleIndex + 1}-backend-${backendIndex + 1}`"
+                    />
                   </el-form-item>
                 </div>
                 <el-button :icon="Plus" class="w-full" @click="addBackend(rule)">{{ texts.addBackend }}</el-button>
@@ -807,10 +811,18 @@ watch(activeTab, (tab) => {
             </div>
             <el-form label-position="top">
               <el-form-item :label="texts.routePlugins">
-                <PluginListForm v-model="routeModel.plugins" />
+                <PluginListForm
+                  v-model="routeModel.plugins"
+                  binding-scope="route"
+                  :binding-name="`${routeModel.route_name}-route`"
+                />
               </el-form-item>
               <el-form-item v-for="(rule, index) in routeModel.rules" :key="index" :label="texts.rulePlugins(index)">
-                <PluginListForm v-model="rule.plugins" />
+                <PluginListForm
+                  v-model="rule.plugins"
+                  binding-scope="rule"
+                  :binding-name="`${routeModel.route_name}-rule-${index + 1}`"
+                />
               </el-form-item>
             </el-form>
           </section>
