@@ -3,11 +3,11 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Api, Model } from 'spacegate-admin-client'
-import { CopyDocument, Delete, Edit, Plus, Refresh } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Edit, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ActionBar from '../components/ActionBar.vue'
 import RouteEditorDrawer from '../components/RouteEditorDrawer.vue'
-import { backendSummary, cloneJson, hostnameSummary, pluginCount, routeMatchSummary } from './console-utils'
+import { backendSummary, cloneJson, hostnameSummary, pluginCount, routeMatchSummary, routeTypeLabel } from './console-utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,11 +17,11 @@ const loading = ref(false)
 const saving = ref(false)
 const search = ref('')
 const gatewayNames = ref<string[]>([])
-const routes = ref<Model.SgHttpRoute[]>([])
+const routes = ref<Model.SgRoute[]>([])
 const drawerOpen = ref(false)
 const drawerMode = ref<'create' | 'edit'>('create')
 const originalRouteName = ref('')
-const formModel = ref<Model.SgHttpRoute>(newRoute())
+const formModel = ref<Model.SgRoute>(newRoute())
 
 const texts = computed(() => locale.value.startsWith('zh') ? {
   loadGatewayFailed: '网关列表加载失败，请确认 admin-server 已启动',
@@ -40,6 +40,7 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   create: '新建路由',
   search: '搜索路由、主机名或后端',
   routeName: '路由名称',
+  routeType: '类型',
   hostname: '主机名',
   match: '匹配',
   backend: '后端',
@@ -68,6 +69,7 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   create: 'Create Route',
   search: 'Search route, hostname, or backend',
   routeName: 'Route',
+  routeType: 'Type',
   hostname: 'Hostname',
   match: 'Match',
   backend: 'Backend',
@@ -119,6 +121,7 @@ function newRoute(): Model.SgHttpRoute {
             host: { kind: 'Host', host: '127.0.0.1' },
             port: 80,
             timeout_ms: null,
+            timeout_mode: null,
             protocol: 'http',
             weight: 1,
             plugins: [],
@@ -126,6 +129,8 @@ function newRoute(): Model.SgHttpRoute {
           },
         ],
         timeout_ms: null,
+        timeout_mode: null,
+        balance_policy: null,
       },
     ],
     priority: 0,
@@ -154,7 +159,7 @@ async function loadRoutes() {
   try {
     const names = (await Api.getConfigItemRouteNames(gatewayName.value)).data
     const loaded = await Promise.all(names.map(async (name) => (await Api.getConfigItemRoute(gatewayName.value!, name)).data))
-    routes.value = loaded.filter((item): item is Model.SgHttpRoute => item != null)
+    routes.value = loaded.filter((item): item is Model.SgRoute => item != null)
   } catch {
     routes.value = []
     ElMessage.warning(texts.value.loadRouteFailed)
@@ -170,14 +175,14 @@ function openCreate() {
   drawerOpen.value = true
 }
 
-function openEdit(item: Model.SgHttpRoute) {
+function openEdit(item: Model.SgRoute) {
   drawerMode.value = 'edit'
   originalRouteName.value = item.route_name
   formModel.value = cloneJson(item)
   drawerOpen.value = true
 }
 
-function openCopy(item: Model.SgHttpRoute) {
+function openCopy(item: Model.SgRoute) {
   drawerMode.value = 'create'
   originalRouteName.value = ''
   formModel.value = cloneJson(item)
@@ -208,7 +213,7 @@ async function save() {
   }
 }
 
-async function remove(item: Model.SgHttpRoute) {
+async function remove(item: Model.SgRoute) {
   if (!gatewayName.value) return
   try {
     await ElMessageBox.confirm(texts.value.confirmDelete(item.route_name), texts.value.deleteTitle, {
@@ -239,15 +244,6 @@ onMounted(async () => {
         <p>{{ texts.subtitle }}</p>
       </div>
       <div class="page-actions">
-        <el-select
-          :model-value="gatewayName"
-          class="page-gateway-select"
-          :placeholder="texts.gatewayPlaceholder"
-          @update:model-value="(value) => router.replace({ query: { ...route.query, gatewayName: value } })"
-        >
-          <el-option v-for="name in gatewayNames" :key="name" :label="name" :value="name" />
-        </el-select>
-        <el-button :icon="Refresh" @click="loadRoutes">{{ texts.refresh }}</el-button>
         <el-button type="primary" :icon="Plus" :disabled="!gatewayName" @click="openCreate">{{ texts.create }}</el-button>
       </div>
     </div>
@@ -258,6 +254,11 @@ onMounted(async () => {
       </div>
       <el-table v-loading="loading" :data="filteredRoutes" row-key="route_name">
         <el-table-column prop="route_name" :label="texts.routeName" min-width="180" />
+        <el-table-column :label="texts.routeType" width="120">
+          <template #default="{ row }">
+            <el-tag size="small" :type="routeTypeLabel(row) === 'MCPRoute' ? 'success' : 'info'">{{ routeTypeLabel(row) }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column :label="texts.hostname" min-width="180">
           <template #default="{ row }">{{ hostnameSummary(row) }}</template>
         </el-table-column>
@@ -267,7 +268,9 @@ onMounted(async () => {
         <el-table-column :label="texts.backend" min-width="220">
           <template #default="{ row }">{{ backendSummary(row) }}</template>
         </el-table-column>
-        <el-table-column prop="priority" :label="texts.priority" width="100" />
+        <el-table-column :label="texts.priority" width="100">
+          <template #default="{ row }">{{ routeTypeLabel(row) === 'MCPRoute' ? '-' : row.priority }}</template>
+        </el-table-column>
         <el-table-column :label="texts.plugins" width="90">
           <template #default="{ row }">{{ pluginCount(row.plugins) }}</template>
         </el-table-column>

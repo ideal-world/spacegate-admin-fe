@@ -29,6 +29,8 @@ export default defineConfig({
     dedupe: ['vue', 'vue-i18n', 'element-plus'],
     alias: {
       '@components/config': path.resolve(__dirname, '../spacegate-admin-front/src'),
+      'spacegate-admin-client': path.resolve(__dirname, '../spacegate/sdk/admin-client/src'),
+      'axios': path.resolve(__dirname, './node_modules/axios'),
       '@': path.resolve('./src'),
     }
   },

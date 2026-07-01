@@ -6,7 +6,7 @@ import { Api, Model } from 'spacegate-admin-client'
 import { Connection, Operation, Position } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { Puzzle } from '../icons'
-import { backendSummary, listenerSummary, pluginCount, routeMatchSummary } from './console-utils'
+import { backendSummary, isMcpRoute, listenerSummary, pluginCount, routeMatchSummary } from './console-utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,7 +14,7 @@ const { locale } = useI18n()
 
 const loading = ref(false)
 const gatewayNames = ref<string[]>([])
-const routes = ref<Model.SgHttpRoute[]>([])
+const routes = ref<Model.SgRoute[]>([])
 const pluginInstanceCount = ref(0)
 const instances = ref<Array<{ id: string; healthy?: boolean }>>([])
 
@@ -50,6 +50,7 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   routeSummaryDesc: '当前网关下的路由匹配和后端摘要。',
   viewAll: '查看全部',
   routeName: '路由名称',
+  routeType: '类型',
   match: '匹配',
   backend: '后端',
   priority: '优先级',
@@ -82,6 +83,7 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   routeSummaryDesc: 'Route matching and backend summary under the current gateway.',
   viewAll: 'View All',
   routeName: 'Route',
+  routeType: 'Type',
   match: 'Match',
   backend: 'Backend',
   priority: 'Priority',
@@ -142,7 +144,8 @@ async function loadGatewayDetail() {
   try {
     selectedGateway.value = (await Api.getConfigItemGateway(gatewayName.value)).data
     const names = (await Api.getConfigItemRouteNames(gatewayName.value)).data
-    routes.value = await Promise.all(names.map(async (name) => (await Api.getConfigItemRoute(gatewayName.value!, name)).data))
+    const loaded = await Promise.all(names.map(async (name) => (await Api.getConfigItemRoute(gatewayName.value!, name)).data))
+    routes.value = loaded.filter((item): item is Model.SgRoute => item != null)
   } catch {
     selectedGateway.value = null
     routes.value = []
@@ -236,13 +239,20 @@ onMounted(load)
       </div>
       <el-table :data="routes.slice(0, 6)">
         <el-table-column prop="route_name" :label="texts.routeName" min-width="180" />
+        <el-table-column :label="texts.routeType" width="110">
+          <template #default="{ row }">
+            <el-tag size="small" :type="isMcpRoute(row) ? 'success' : 'info'">{{ isMcpRoute(row) ? 'MCPRoute' : 'HTTPRoute' }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column :label="texts.match" min-width="180">
           <template #default="{ row }">{{ routeMatchSummary(row) }}</template>
         </el-table-column>
         <el-table-column :label="texts.backend" min-width="180">
           <template #default="{ row }">{{ backendSummary(row) }}</template>
         </el-table-column>
-        <el-table-column prop="priority" :label="texts.priority" width="100" />
+        <el-table-column :label="texts.priority" width="100">
+          <template #default="{ row }">{{ isMcpRoute(row) ? '-' : row.priority }}</template>
+        </el-table-column>
       </el-table>
     </section>
 

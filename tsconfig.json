@@ -21,6 +21,18 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "spacegate-admin-client": [
+        "../spacegate/sdk/admin-client/src/index.ts"
+      ],
+      "spacegate-admin-client/*": [
+        "../spacegate/sdk/admin-client/src/*"
+      ],
+      "axios": [
+        "./node_modules/axios/index.d.ts"
+      ]
+    },
     "types": [
       "vite/client",
       "element-plus/global"

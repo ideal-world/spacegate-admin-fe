@@ -7,12 +7,12 @@ import 'element-plus/dist/index.css'
 import SgAdm, { Login } from '@components/config'
 import { LOCALES } from './locales'
 import { Api } from 'spacegate-admin-client'
+import { AxiosError } from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import * as monaco from 'monaco-editor'
 import { createI18n } from 'vue-i18n'
-import { AxiosError, ExceptionVersionConflict } from 'spacegate-admin-client/dist/api'
 const i18n = createI18n({
   legacy: false,
   locale: 'zh-CN',
@@ -60,7 +60,7 @@ Api.getClient().axiosInstance.interceptors.response.use(
     } else if (error instanceof AxiosError) {
       const message = error.response.data;
       ElMessage.warning(message);
-    } else if (error instanceof ExceptionVersionConflict) {
+    } else if (error instanceof Api.ExceptionVersionConflict) {
       const message = "version conflict, please refresh and commit";
       ElMessage.warning(message);
     }
