@@ -33,6 +33,7 @@ const pages = [
   { name: 'menu.gateway', path: '/gateways', icon: GatewayIcon },
   { name: 'menu.router', path: '/routes', icon: RouterIcon },
   { name: 'menu.plugin', path: '/plugins', icon: Puzzle },
+  { name: 'menu.aiQueue', path: '/ai-queue', icon: Operation },
   { name: 'menu.instance', path: '/instances', icon: Instance },
 ]
 

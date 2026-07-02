@@ -4,11 +4,12 @@ export default {
     "router": "Router",
     "gateway": "Gateway",
     "plugin": "Plugin",
+    "aiQueue": "AI Rate Limit",
     "instance": "Instance",
   },
   "tab": {
     "nativePlugin": "Native Plugins",
-    "aiPlugin": "AI"
+    "aiPlugin": "Wasm Extensions"
   },
   "label": {
     "file": "File",

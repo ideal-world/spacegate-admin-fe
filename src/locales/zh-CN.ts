@@ -4,11 +4,12 @@ export default {
     "router": "路由",
     "gateway": "网关",
     "plugin": "插件",
+    "aiQueue": "AI限流",
     "instance": "实例",
   },
   "tab": {
     "nativePlugin": "原生插件",
-    "aiPlugin": "AI"
+    "aiPlugin": "Wasm 扩展"
   },
   "label": {
     "file": "文件",

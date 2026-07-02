@@ -8,6 +8,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/routes', component: () => import('./views/Routes.vue') },
   { path: '/route', redirect: '/routes' },
   { path: '/plugins', component: () => import('./views/Plugins.vue') },
+  { path: '/ai-queue', component: () => import('./views/AiQueueRateLimit.vue') },
   { path: '/instances', component: () => import('./views/Instances.vue') },
   { path: '/instance', redirect: '/instances' },
 ]

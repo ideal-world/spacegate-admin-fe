@@ -13,6 +13,8 @@ declare module '@components/config' {
   export const RouteForm: DefineComponent<Record<string, never>, Record<string, never>, any>
   export const PluginListForm: DefineComponent<Record<string, never>, Record<string, never>, any>
   export const PluginPanel: DefineComponent<Record<string, never>, Record<string, never>, any>
+  export const AiGatewayQueueDrawer: DefineComponent<Record<string, never>, Record<string, never>, any>
+  export const TenantRateLimitTable: DefineComponent<Record<string, never>, Record<string, never>, any>
   export const InstanceList: DefineComponent<Record<string, never>, Record<string, never>, any>
   export const Login: DefineComponent<Record<string, never>, Record<string, never>, any>
 }
