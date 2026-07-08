@@ -6,12 +6,11 @@ export default {
   },
   content: [
     "./src/**/*.{html,js,ts,vue}",
-    "./components/config/src/components/**/*.{js,jsx,ts,tsx,vue}",
-    "./components/config/src/views/**/*.{js,jsx,ts,tsx,vue}",
+    "../spacegate-admin-front/src/components/**/*.{js,jsx,ts,tsx,vue}",
+    "../spacegate-admin-front/src/views/**/*.{js,jsx,ts,tsx,vue}",
   ],
   theme: {
     extend: {},
   },
   plugins: [],
 }
-

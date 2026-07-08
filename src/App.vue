@@ -1,162 +1,162 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
-import Menu from './components/Menu.vue'
-import Header from './components/Header.vue'
-import { useRouter } from 'vue-router'
-import { SelectGateway } from '@components/config'
-import { Fold, Expand, } from '@element-plus/icons-vue'
-import {
-  Lang,
-  RouterIcon,
-  GatewayIcon,
-  Github,
-  Puzzle,
-  Instance
-} from './icons'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Api } from 'spacegate-admin-client';
-const { locale, t } = useI18n()
+import {
+  DataBoard,
+  Expand,
+  Fold,
+  Operation,
+  Switch,
+} from '@element-plus/icons-vue'
+import { Api } from 'spacegate-admin-client'
+import ConsoleGatewaySelect from './components/ConsoleGatewaySelect.vue'
+import { Lang, RouterIcon, GatewayIcon, Instance, Github, Puzzle } from './icons'
+
+const route = useRoute()
 const router = useRouter()
-const langs = [
-  {
-    name: '中文',
-    value: 'zh-CN'
-  },
-  {
-    name: 'English',
-    value: 'en-US'
-  }
-]
+const { locale, t } = useI18n()
+
 const isMenuCollapse = ref(false)
-const pages = [
-  { name: 'menu.gateway', path: '/gateway', icon: GatewayIcon },
-  { name: 'menu.router', path: '/route', icon: RouterIcon },
-  { name: 'menu.plugin', path: '/plugins', icon: Puzzle },
-  { name: 'menu.instance', path: '/instance', icon: Instance },
-]
-const currentPage = ref(pages.find(p => p.path === router.currentRoute.value.path)?.name ?? '')
 const gatewayName = ref<string>()
-watch([gatewayName, currentPage], async ([newGatewayName, _page]) => {
-  if (newGatewayName) {
-    await router.replace({ query: { gatewayName: newGatewayName } });
-  }
+const instanceOnlineCount = ref(0)
+const instanceCount = ref(0)
+const healthCheckIntervalHandle = ref<number>()
+const appTexts = computed(() => locale.value.startsWith('zh') ? {
+  instance: '实例',
+} : {
+  instance: 'Instances',
 })
-watch(() => router.currentRoute.value.query['gatewayName'], (newValue) => {
-  if(typeof newValue === 'string') {
-    gatewayName.value = newValue
-  }
+
+const pages = [
+  { name: 'menu.overview', path: '/overview', icon: DataBoard },
+  { name: 'menu.gateway', path: '/gateways', icon: GatewayIcon },
+  { name: 'menu.router', path: '/routes', icon: RouterIcon },
+  { name: 'menu.plugin', path: '/plugins', icon: Puzzle },
+  { name: 'menu.aiQueue', path: '/ai-queue', icon: Operation },
+  { name: 'menu.instance', path: '/instances', icon: Instance },
+]
+
+const langs = [
+  { name: '中文', value: 'zh-CN' },
+  { name: 'English', value: 'en-US' },
+]
+
+const activePage = computed(() => {
+  const current = pages.find((page) => route.path === page.path)
+  return current?.path ?? '/overview'
 })
-function toPage(pageName: string) {
-  let page = pages.find(p => p.path === pageName);
-  if (!page) {
-    return
-  } else {
-    router.push({
-      path: page.path,
-      query: { gatewayName: gatewayName.value }
-    })
+
+const instanceStatus = computed(() => {
+  if (instanceCount.value === 0) return 'info'
+  if (instanceOnlineCount.value === 0) return 'danger'
+  if (instanceOnlineCount.value === instanceCount.value) return 'success'
+  return 'warning'
+})
+
+watch(
+  () => route.query.gatewayName,
+  (value) => {
+    if (typeof value === 'string') gatewayName.value = value
+  },
+  { immediate: true },
+)
+
+watch(gatewayName, async (name) => {
+  if (!name) return
+  if (route.query.gatewayName === name) return
+  await router.replace({ query: { ...route.query, gatewayName: name } })
+})
+
+function toPage(path: string) {
+  router.push({
+    path,
+    query: gatewayName.value ? { gatewayName: gatewayName.value } : {},
+  })
+}
+
+async function refreshInstanceHealth() {
+  try {
+    const health = await Api.discoveryInstanceHealth()
+    let total = 0
+    let healthy = 0
+    for (const isHealthy of Object.values(health.data)) {
+      total += 1
+      if (isHealthy) healthy += 1
+    }
+    instanceCount.value = total
+    instanceOnlineCount.value = healthy
+  } catch {
+    instanceCount.value = 0
+    instanceOnlineCount.value = 0
   }
 }
-const instanceOnlineCount = ref<number>(0);
-const instanceCount = ref<number>(0);
-const healthCheckIntervalHandle = ref<number>(undefined);
-const instanceStatus = computed(() => {
-  if (instanceCount.value === 0) {
-    return 'info'
-  } else if (instanceOnlineCount.value === 0) {
-    return 'danger'
-  } else if (instanceOnlineCount.value === instanceCount.value) {
-    return 'success'
-  } else {
-    return 'warning'
-  }
-});
-/* const instanceStatusText = computed(() => {
-  if (instanceOnlineCount.value === null) {
-    return t('hint.unreachable')
-  } else if (instanceOnlineCount.value) {
-    return t('hint.online')
-  } else {
-    return t('hint.offline')
-  }
-}); */
-onMounted(
-  () => {
-    healthCheckIntervalHandle.value = setInterval(async () => {
-      try {
-        let health = await Api.discoveryInstanceHealth();
-        console.log(health)
-        let totalCount = 0;
-        let healthyCount = 0;
-        for (const isHealthy of Object.values(health.data)) {
-          totalCount += 1;
-          if (isHealthy) {
-            healthyCount += 1;
-          }
-        }
-        console.log(totalCount, healthyCount)
-        instanceCount.value = totalCount;
-        instanceOnlineCount.value = healthyCount;
-      } catch (e) {
-        instanceCount.value = 0;
-        instanceOnlineCount.value = 0;
-      }
-    }, 5000);
 
-  }
-)
-onUnmounted(() => {
-  if (healthCheckIntervalHandle.value) clearInterval(healthCheckIntervalHandle.value);
+onMounted(() => {
+  refreshInstanceHealth()
+  healthCheckIntervalHandle.value = window.setInterval(refreshInstanceHealth, 5000)
 })
 
-
+onUnmounted(() => {
+  if (healthCheckIntervalHandle.value) window.clearInterval(healthCheckIntervalHandle.value)
+})
 </script>
 
 <template>
-  <el-container class="h-screen w-screen">
-    <el-aside class="min-h-screen w-auto flex">
-      <Menu :collapse="isMenuCollapse" :current-page="currentPage" :pages="pages" @to-page="toPage" />
+  <el-container class="sg-console">
+    <el-aside class="sg-console__aside" :class="{ 'is-collapsed': isMenuCollapse }">
+      <div class="sg-console__brand">
+        <el-icon class="sg-console__brand-icon"><Switch /></el-icon>
+        <span v-if="!isMenuCollapse">SpaceGate</span>
+      </div>
+      <el-menu :default-active="activePage" class="sg-console__menu" :collapse="isMenuCollapse">
+        <el-menu-item v-for="page in pages" :key="page.path" :index="page.path" @click="toPage(page.path)">
+          <el-icon><component :is="page.icon" /></el-icon>
+          <template #title>{{ t(page.name) }}</template>
+        </el-menu-item>
+      </el-menu>
     </el-aside>
-    <el-container class="flex-grow">
-      <el-header class="w-100 flex border-b border-gray-200 ">
-        <Header>
-          <template #left>
-            <el-button circle text size="large" :icon="isMenuCollapse ? Expand : Fold"
-              @click="isMenuCollapse = !isMenuCollapse"></el-button>
-            <el-button class="mx-1" text disabled :type="instanceStatus
-              ">●{{ instanceOnlineCount }}/{{ instanceCount }}</el-button>
-            <SelectGateway v-model="gatewayName" />
-          </template>
-          <template #right>
-            <el-dropdown>
-              <span class="el-dropdown-link">
-                <el-button circle text size="large" :icon="Lang" />
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item v-for="lang in langs" @click="locale = lang.value">
-                    {{
-                      lang.name
-                    }}
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-            <a href="https://github.com/ideal-world/spacegate-admin-fe" target="_blank">
-              <el-button text circle :icon="Github" link>
-              </el-button>
-            </a>
-          </template>
-        </Header>
+
+    <el-container class="sg-console__body">
+      <el-header class="sg-console__header">
+        <div class="sg-console__header-left">
+          <el-button
+            circle
+            text
+            size="large"
+            :icon="isMenuCollapse ? Expand : Fold"
+            @click="isMenuCollapse = !isMenuCollapse"
+          />
+          <div class="sg-console__selector">
+            <span class="sg-console__selector-label">{{ t('label.gatewayName') }}</span>
+            <ConsoleGatewaySelect v-model="gatewayName" />
+          </div>
+        </div>
+
+        <div class="sg-console__header-right">
+          <el-tag :type="instanceStatus" effect="light">
+            {{ appTexts.instance }} {{ instanceOnlineCount }}/{{ instanceCount }}
+          </el-tag>
+          <el-dropdown>
+            <el-button circle text size="large" :icon="Lang" />
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="lang in langs" :key="lang.value" @click="locale = lang.value">
+                  {{ lang.name }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <a href="https://github.com/ideal-world/spacegate" target="_blank" rel="noreferrer">
+            <el-button text circle :icon="Github" />
+          </a>
+          <el-button text circle :icon="Operation" @click="toPage('/instances')" />
+        </div>
       </el-header>
-      <el-main class="flex flex-col space-y-2 y-full">
+
+      <el-main class="sg-console__main">
         <router-view />
       </el-main>
-      <el-footer class="flex justify-center align-center items-center">
-        <div class="container mx-auto flex justify-center">
-          <p class="text-center text-sm text-gray-500">&copy; 2025 Ideal World</p>
-        </div>
-      </el-footer>
     </el-container>
   </el-container>
 </template>

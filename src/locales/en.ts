@@ -1,8 +1,15 @@
 export default {
   "menu": {
+    "overview": "Overview",
     "router": "Router",
     "gateway": "Gateway",
     "plugin": "Plugin",
+    "aiQueue": "AI Rate Limit",
+    "instance": "Instance",
+  },
+  "tab": {
+    "nativePlugin": "Native Plugins",
+    "aiPlugin": "Wasm Extensions"
   },
   "label": {
     "file": "File",
@@ -11,7 +18,8 @@ export default {
     "k8sService": "K8s Service",
     "host": "Host",
     "name": "Name",
-    "code": "Plugin Code",
+    "pluginInstanceName": "Plugin Instance Name",
+    "code": "Plugin Type",
     "spec": "Configuration",
     "listeners": "Listeners",
     "parameters": "Parameters",
@@ -47,17 +55,20 @@ export default {
     "logLevel": "Log Level",
     "lang": "Language",
     "ignoreTlsVerification": "Ignore TLS Verification",
-    "instance": "Instance",
-    "enbaleXRequestId": "Enable x-request-id",
+    "instance": "Plugin Configuration",
+    "enableXRequestId": "Enable x-request-id",
     "http2Downgrade": "HTTP2 Downgrade",
-    "health": "health"
+    "health": "Health",
+    "operation": "Actions",
   },
   "title": {
-    "newPlugin": "New Plugin",
-    "editPlugin": "Edit Plugin",
+    "newPlugin": "Bind Plugin",
+    "editPlugin": "Edit Plugin Binding",
     "createRoute": "Create Route",
     "editRoute": "Edit Route",
-    "setting": "Setting"
+    "setting": "Setting",
+    "createWasmPlugin": "Custom Wasm Plugin Configuration",
+    "gatewayReload": "Gateway Reload",
   },
   "button": {
     "login": "Login",
@@ -67,7 +78,7 @@ export default {
     "upload": "Upload",
     "download": "Download",
     "addListener": "Add Listener",
-    "addPlugin": "Add Plugin",
+    "addPlugin": "Bind Plugin",
     "addRule": "Add Rule",
     "addHost": "Add Host",
     "addBackend": "Add Backend",
@@ -79,8 +90,11 @@ export default {
     "new": "New",
     "refresh": "Refresh",
     "edit": "Edit",
+    "back": "Back",
     "discover": "Discover",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "globalReload": "Global Reload",
+    "gatewayReload": "Gateway Reload",
   },
   "hint": {
     "needLogin": "Login required",
@@ -89,13 +103,20 @@ export default {
     "confirmDeleteGateway": "Confirm delete this gateway?",
     "missingGatewayName": "Missing gateway name.",
     "duplicatedGatewayName": "Duplicated gateway name.",
-    "selectAnInstance": "Select an instance",
-    "createAnInstance": "Create an instance",
+    "selectAnInstance": "Reference plugin configuration",
+    "createAnInstance": "Custom plugin configuration",
     "rewriteTo": "Rewrite to",
     "unreachable": "unreachable",
     "online": "online",
     "offline": "offline",
     "selectBackend": "Select a backend",
+    "selectGateway": "Select Gateway",
+    "currentInstance": "Current Instance",
+    "searchPlugin": "Search plugins",
+    "pluginMono": "Mono plugin — click Configure to manage",
+    "deployed": "Deployed",
+    "wasmInstance": "Wasm plugin instance",
+    "requiredFieldsMissing": "Please fill in all required fields"
   },
   "placeholder": {
     "serviceName": "Service Name",
