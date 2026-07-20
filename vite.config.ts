@@ -34,7 +34,7 @@ export default defineConfig({
   resolve: {
     dedupe: ['vue', 'vue-i18n', 'element-plus'],
     alias: {
-      '@components/config': resolvePath('../spacegate-admin-front/src'),
+      '@components/config': resolvePath('./components/config/src'),
       'spacegate-admin-client': resolvePath('../spacegate/sdk/admin-client/src'),
       'axios': resolvePath('./node_modules/axios'),
       '@': resolvePath('./src'),
