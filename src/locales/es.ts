@@ -11,7 +11,17 @@ export default {
         "k8sService": "k8s服务",
         "host": "主机",
         "name": "名称",
+        "displayName": "展示名称",
         "pluginInstanceName": "插件实例名称",
+        "pluginType": "插件类型",
+        "instanceId": "实例 ID",
+        "native": "Native",
+        "wasm": "Wasm",
+        "imageUrl": "镜像地址",
+        "pluginName": "插件名称",
+        "failStrategy": "失败策略",
+        "pluginConfig": "插件配置",
+        "runtimeConfig": "完整运行时配置",
         "code": "插件类型",
         "spec": "配置",
         "listeners": "监听",
@@ -53,6 +63,7 @@ export default {
     "title": {
         "newPlugin": "绑定插件",
         "editPlugin": "编辑插件绑定",
+        "pluginBindingDetail": "插件挂载详情",
         "createRoute": "新建路由",
         "editRoute": "编辑路由",
         "setting": "配置",
@@ -88,6 +99,9 @@ export default {
         "duplicatedGatewayName": "重复的网关名称。",
         "selectAnInstance": "引用插件配置",
         "createAnInstance": "自定义插件配置",
-        "rewriteTo": "重写为"
+        "rewriteTo": "重写为",
+        "pluginInstanceMissing": "挂载引用的插件实例不存在，挂载关系已保留。",
+        "pluginInstanceLoadFailed": "插件实例详情加载失败，挂载关系仍可编辑。",
+        "priorityTieOrder": "仅当优先级相同时，拖拽顺序决定执行顺序。"
     }
 }

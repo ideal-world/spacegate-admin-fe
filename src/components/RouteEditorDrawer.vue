@@ -361,6 +361,8 @@ function normalizeHttpRoute(route: Model.SgHttpRoute) {
       if (!Array.isArray(rule.matches) || rule.matches.length === 0) rule.matches = [defaultMatch()]
       rule.matches.forEach((match) => {
         if (!match.path) match.path = { kind: 'Prefix', value: '/', replace: null }
+        // Element Plus clears an input to an empty string, while `null` means no rewrite in the route model.
+        if (match.path.replace?.trim() === '') match.path.replace = null
       })
     }
     if (!Array.isArray(rule.backends) || rule.backends.length === 0) rule.backends = [defaultBackend()]

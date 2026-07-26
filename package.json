@@ -12,10 +12,10 @@
     "fix": "eslint --fix ."
   },
   "dependencies": {
-    "@components/config": "file:../spacegate-admin-front",
+    "@components/config": "file:components/config",
     "@element-plus/icons-vue": "^2.3.1",
     "autoprefixer": "^10.4.19",
-    "axios": "^1.7.0",
+    "axios": "1.18.1",
     "element-plus": "^2.7.3",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.46.0",
