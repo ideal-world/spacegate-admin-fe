@@ -44,7 +44,10 @@ EOF
 fi
 
 log "Type checking Vue and TypeScript"
-npm exec -- vue-tsc --noEmit
+npm run typecheck
+
+log "Running unit tests"
+npm test
 
 log "Building frontend"
 npm run build-all

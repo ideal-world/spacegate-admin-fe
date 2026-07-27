@@ -94,6 +94,16 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
 
 const onlineCount = computed(() => instances.value.filter((item) => item.healthy).length)
 
+// Element Plus exposes table slots as DefaultRow; restore the declared :data element type at the slot boundary.
+function routeTableRow(row: unknown): Model.SgRoute {
+  return row as Model.SgRoute
+}
+
+function routePriority(row: unknown) {
+  const route = routeTableRow(row)
+  return isMcpRoute(route) ? '-' : route.priority
+}
+
 async function load() {
   loading.value = true
   try {
@@ -241,17 +251,17 @@ onMounted(load)
         <el-table-column prop="route_name" :label="texts.routeName" min-width="180" />
         <el-table-column :label="texts.routeType" width="110">
           <template #default="{ row }">
-            <el-tag size="small" :type="isMcpRoute(row) ? 'success' : 'info'">{{ isMcpRoute(row) ? 'MCPRoute' : 'HTTPRoute' }}</el-tag>
+            <el-tag size="small" :type="isMcpRoute(routeTableRow(row)) ? 'success' : 'info'">{{ isMcpRoute(routeTableRow(row)) ? 'MCPRoute' : 'HTTPRoute' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="texts.match" min-width="180">
-          <template #default="{ row }">{{ routeMatchSummary(row) }}</template>
+          <template #default="{ row }">{{ routeMatchSummary(routeTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.backend" min-width="180">
-          <template #default="{ row }">{{ backendSummary(row) }}</template>
+          <template #default="{ row }">{{ backendSummary(routeTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.priority" width="100">
-          <template #default="{ row }">{{ isMcpRoute(row) ? '-' : row.priority }}</template>
+          <template #default="{ row }">{{ routePriority(row) }}</template>
         </el-table-column>
       </el-table>
     </section>

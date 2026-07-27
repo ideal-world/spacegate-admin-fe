@@ -1,0 +1,8 @@
+{
+  // External component sources are checked for type safety, but not blocked by their local unused declarations.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}

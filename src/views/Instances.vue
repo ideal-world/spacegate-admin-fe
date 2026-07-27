@@ -140,6 +140,11 @@ async function copyId(id: string) {
   }
 }
 
+// Element Plus exposes table slots as DefaultRow; restore the declared :data element type at the slot boundary.
+function instanceTableRow(row: unknown): InstanceRow {
+  return row as InstanceRow
+}
+
 onMounted(load)
 </script>
 
@@ -166,19 +171,19 @@ onMounted(load)
         <el-table-column :label="texts.instanceId" min-width="220">
           <template #default="{ row }">
             <div style="display: flex; align-items: center; gap: 6px;">
-              <code>{{ row.id }}</code>
-              <el-button :icon="CopyDocument" text size="small" @click="copyId(row.id)" />
+              <code>{{ instanceTableRow(row).id }}</code>
+              <el-button :icon="CopyDocument" text size="small" @click="copyId(instanceTableRow(row).id)" />
             </div>
           </template>
         </el-table-column>
         <el-table-column :label="texts.controlApi" min-width="180">
           <template #default="{ row }">
-            <code>http://{{ row.id }}</code>
+            <code>http://{{ instanceTableRow(row).id }}</code>
           </template>
         </el-table-column>
         <el-table-column :label="texts.health" width="140">
           <template #default="{ row }">
-            <el-tag :type="statusType(row.healthy)">{{ statusText(row.healthy) }}</el-tag>
+            <el-tag :type="statusType(instanceTableRow(row).healthy)">{{ statusText(instanceTableRow(row).healthy) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="texts.operation" width="240" fixed="right" align="center" header-align="center">
@@ -188,16 +193,16 @@ onMounted(load)
                 :icon="Switch"
                 type="warning"
                 size="small"
-                :loading="actionLoading === `gateway:${row.id}`"
-                @click="reloadGateway(row)"
+                :loading="actionLoading === `gateway:${instanceTableRow(row).id}`"
+                @click="reloadGateway(instanceTableRow(row))"
               >
                 {{ texts.gatewayReload }}
               </el-button>
               <el-button
                 type="danger"
                 size="small"
-                :loading="actionLoading === `global:${row.id}`"
-                @click="reloadGlobal(row)"
+                :loading="actionLoading === `global:${instanceTableRow(row).id}`"
+                @click="reloadGlobal(instanceTableRow(row))"
               >
                 {{ texts.globalReload }}
               </el-button>

@@ -198,6 +198,11 @@ function handleDrawerClose(done: () => void) {
     cancelButtonText: locale.value.startsWith('zh') ? '取消' : 'Cancel',
   }).then(() => { isDirty.value = false; done() }).catch(() => {})
 }
+
+// Element Plus exposes table slots as DefaultRow; restore the declared :data element type at the slot boundary.
+function gatewayTableRow(row: unknown): Model.SgGateway {
+  return row as Model.SgGateway
+}
 </script>
 
 <template>
@@ -217,23 +222,23 @@ function handleDrawerClose(done: () => void) {
       <el-table v-loading="loading" :data="gateways" row-key="name">
         <el-table-column prop="name" :label="texts.name" min-width="180" />
         <el-table-column :label="texts.listeners" min-width="260">
-          <template #default="{ row }">{{ listenerSummary(row) }}</template>
+          <template #default="{ row }">{{ listenerSummary(gatewayTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.routes" width="100">
-          <template #default="{ row }">{{ routeCounts[row.name] ?? '-' }}</template>
+          <template #default="{ row }">{{ routeCounts[gatewayTableRow(row).name] ?? '-' }}</template>
         </el-table-column>
         <el-table-column :label="texts.plugins" width="100">
-          <template #default="{ row }">{{ pluginCount(row.plugins) }}</template>
+          <template #default="{ row }">{{ pluginCount(gatewayTableRow(row).plugins) }}</template>
         </el-table-column>
         <el-table-column label="Redis" min-width="180">
-          <template #default="{ row }">{{ row.parameters?.redis_url || '-' }}</template>
+          <template #default="{ row }">{{ gatewayTableRow(row).parameters?.redis_url || '-' }}</template>
         </el-table-column>
         <el-table-column :label="texts.operation" width="220" fixed="right">
           <template #default="{ row }">
             <ActionBar>
-              <el-button :icon="View" link @click="viewRoutes(row)">{{ texts.routes }}</el-button>
-              <el-button :icon="Edit" type="primary" link @click="openEdit(row)">{{ texts.edit }}</el-button>
-              <el-button :icon="Delete" type="danger" link @click="remove(row)">{{ texts.delete }}</el-button>
+              <el-button :icon="View" link @click="viewRoutes(gatewayTableRow(row))">{{ texts.routes }}</el-button>
+              <el-button :icon="Edit" type="primary" link @click="openEdit(gatewayTableRow(row))">{{ texts.edit }}</el-button>
+              <el-button :icon="Delete" type="danger" link @click="remove(gatewayTableRow(row))">{{ texts.delete }}</el-button>
             </ActionBar>
           </template>
         </el-table-column>

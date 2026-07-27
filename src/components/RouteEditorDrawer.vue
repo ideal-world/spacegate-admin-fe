@@ -30,10 +30,8 @@ let routeSnapshot = ''
 
 const texts = computed(() => locale.value.startsWith('zh') ? {
   keepOneRule: '至少保留一条规则',
-  keepOneBackend: '每条规则至少保留一个后端',
   validateName: '请输入路由名称',
   validateRule: '至少需要一条规则',
-  validateBackend: '每条规则至少需要一个后端',
   validateMcpBackend: '至少需要一个后端',
   validatePath: '路径必须以 / 开头',
   validateSsePath: 'SSE 路径必须以 / 开头',
@@ -145,10 +143,8 @@ const texts = computed(() => locale.value.startsWith('zh') ? {
   unsavedChanges: '有未保存的修改，确认放弃并关闭？',
 } : {
   keepOneRule: 'Keep at least one rule.',
-  keepOneBackend: 'Each rule must keep at least one backend.',
   validateName: 'Enter a route name.',
   validateRule: 'At least one rule is required.',
-  validateBackend: 'Each rule needs at least one backend.',
   validateMcpBackend: 'At least one backend is required.',
   validatePath: 'Path must start with /.',
   validateSsePath: 'SSE path must start with /.',
@@ -365,7 +361,7 @@ function normalizeHttpRoute(route: Model.SgHttpRoute) {
         if (match.path.replace?.trim() === '') match.path.replace = null
       })
     }
-    if (!Array.isArray(rule.backends) || rule.backends.length === 0) rule.backends = [defaultBackend()]
+    if (!Array.isArray(rule.backends)) rule.backends = []
     rule.backends.forEach((backend) => {
       if (!Array.isArray(backend.plugins)) backend.plugins = []
       if (backend.weight === undefined || backend.weight === null) backend.weight = 1
@@ -479,10 +475,6 @@ function addBackend(rule: Model.SgHttpRouteRule) {
 }
 
 function removeBackend(rule: Model.SgHttpRouteRule, index: number) {
-  if (rule.backends.length === 1) {
-    ElMessage.warning(texts.value.keepOneBackend)
-    return
-  }
   rule.backends.splice(index, 1)
 }
 
@@ -588,7 +580,6 @@ function validateRoute() {
   }
   if (!Array.isArray(routeModel.value.rules) || routeModel.value.rules.length === 0) return texts.value.validateRule
   for (const rule of routeModel.value.rules) {
-    if (!Array.isArray(rule.backends) || rule.backends.length === 0) return texts.value.validateBackend
     for (const match of rule.matches ?? []) {
       if (match.path?.value && !match.path.value.startsWith('/')) return texts.value.validatePath
       if (match.path?.replace && !match.path.replace.startsWith('/')) return texts.value.validateRewrite

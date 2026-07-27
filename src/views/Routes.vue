@@ -7,7 +7,7 @@ import { CopyDocument, Delete, Edit, Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ActionBar from '../components/ActionBar.vue'
 import RouteEditorDrawer from '../components/RouteEditorDrawer.vue'
-import { backendSummary, cloneJson, hostnameSummary, pluginCount, routeMatchSummary, routeTypeLabel } from './console-utils'
+import { backendSummary, cloneJson, hostnameSummary, isMcpRoute, pluginCount, routeMatchSummary, routeTypeLabel } from './console-utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -99,6 +99,16 @@ const filteredRoutes = computed(() => {
     )
   })
 })
+
+// Element Plus exposes table slots as DefaultRow; restore the declared :data element type at the slot boundary.
+function routeTableRow(row: unknown): Model.SgRoute {
+  return row as Model.SgRoute
+}
+
+function routePriority(row: unknown) {
+  const route = routeTableRow(row)
+  return isMcpRoute(route) ? '-' : route.priority
+}
 
 function newRoute(): Model.SgHttpRoute {
   return {
@@ -256,30 +266,30 @@ onMounted(async () => {
         <el-table-column prop="route_name" :label="texts.routeName" min-width="180" />
         <el-table-column :label="texts.routeType" width="120">
           <template #default="{ row }">
-            <el-tag size="small" :type="routeTypeLabel(row) === 'MCPRoute' ? 'success' : 'info'">{{ routeTypeLabel(row) }}</el-tag>
+            <el-tag size="small" :type="routeTypeLabel(routeTableRow(row)) === 'MCPRoute' ? 'success' : 'info'">{{ routeTypeLabel(routeTableRow(row)) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="texts.hostname" min-width="180">
-          <template #default="{ row }">{{ hostnameSummary(row) }}</template>
+          <template #default="{ row }">{{ hostnameSummary(routeTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.match" min-width="180">
-          <template #default="{ row }">{{ routeMatchSummary(row) }}</template>
+          <template #default="{ row }">{{ routeMatchSummary(routeTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.backend" min-width="220">
-          <template #default="{ row }">{{ backendSummary(row) }}</template>
+          <template #default="{ row }">{{ backendSummary(routeTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.priority" width="100">
-          <template #default="{ row }">{{ routeTypeLabel(row) === 'MCPRoute' ? '-' : row.priority }}</template>
+          <template #default="{ row }">{{ routePriority(row) }}</template>
         </el-table-column>
         <el-table-column :label="texts.plugins" width="90">
-          <template #default="{ row }">{{ pluginCount(row.plugins) }}</template>
+          <template #default="{ row }">{{ pluginCount(routeTableRow(row).plugins) }}</template>
         </el-table-column>
         <el-table-column :label="texts.operation" width="230" fixed="right">
           <template #default="{ row }">
             <ActionBar>
-              <el-button :icon="Edit" type="primary" link @click="openEdit(row)">{{ texts.edit }}</el-button>
-              <el-button :icon="CopyDocument" link @click="openCopy(row)">{{ texts.copy }}</el-button>
-              <el-button :icon="Delete" type="danger" link @click="remove(row)">{{ texts.delete }}</el-button>
+              <el-button :icon="Edit" type="primary" link @click="openEdit(routeTableRow(row))">{{ texts.edit }}</el-button>
+              <el-button :icon="CopyDocument" link @click="openCopy(routeTableRow(row))">{{ texts.copy }}</el-button>
+              <el-button :icon="Delete" type="danger" link @click="remove(routeTableRow(row))">{{ texts.delete }}</el-button>
             </ActionBar>
           </template>
         </el-table-column>
