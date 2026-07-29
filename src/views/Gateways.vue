@@ -81,6 +81,10 @@ function newGateway(): Model.SgGateway {
     name: 'new-gateway',
     parameters: {
       redis_url: null,
+      redis_pool_max_size: null,
+      redis_pool_wait_timeout_ms: null,
+      redis_pool_create_timeout_ms: null,
+      redis_pool_recycle_timeout_ms: null,
       log_level: null,
       lang: null,
       enable_x_request_id: false,
