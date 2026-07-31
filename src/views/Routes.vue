@@ -210,6 +210,8 @@ async function save() {
   try {
     if (drawerMode.value === 'create') {
       await Api.postConfigItemRoute(gatewayName.value, formModel.value.route_name, formModel.value)
+    } else if (originalRouteName.value !== formModel.value.route_name) {
+      await Api.renameConfigItemRoute(gatewayName.value, originalRouteName.value, formModel.value)
     } else {
       await Api.putConfigItemRoute(gatewayName.value, originalRouteName.value || formModel.value.route_name, formModel.value)
     }
