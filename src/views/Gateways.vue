@@ -17,6 +17,10 @@ const drawerOpen = ref(false)
 const drawerMode = ref<'create' | 'edit'>('create')
 const gateways = ref<Model.SgGateway[]>([])
 const routeCounts = ref<Record<string, number>>({})
+// 文件配置后端使用目录名作为配置项 ID，不能用运行时网关名称替代。
+const configItemNames = ref<Record<string, string>>({})
+// 编辑时保留原配置项 ID，允许用户同时修改运行时网关名称。
+const editingConfigItemName = ref<string | null>(null)
 const formModel = ref<Model.SgGateway>(newGateway())
 const texts = computed(() => locale.value.startsWith('zh') ? {
   loadFailed: '网关列表加载失败，请确认 admin-server 已启动',
@@ -116,8 +120,16 @@ async function load() {
   loading.value = true
   try {
     const names = (await Api.getConfigNames()).data
-    const loaded = await Promise.all(names.map(async (name) => (await Api.getConfigItemGateway(name)).data))
-    gateways.value = loaded.filter((item): item is Model.SgGateway => item != null)
+    const loaded = await Promise.all(names.map(async configItemName => ({
+      configItemName,
+      gateway: (await Api.getConfigItemGateway(configItemName)).data,
+    })))
+    configItemNames.value = {}
+    gateways.value = loaded.flatMap(({ configItemName, gateway }) => {
+      if (gateway == null) return []
+      configItemNames.value[gateway.name] = configItemName
+      return [gateway]
+    })
     const counts: Record<string, number> = {}
     await Promise.all(names.map(async (name) => {
       try { counts[name] = (await Api.getConfigItemRouteNames(name)).data.length } catch { counts[name] = 0 }
@@ -134,6 +146,7 @@ async function load() {
 
 function openCreate() {
   drawerMode.value = 'create'
+  editingConfigItemName.value = null
   formModel.value = newGateway()
   drawerOpen.value = true
   nextTick(() => { formSnapshot = JSON.stringify(formModel.value); isDirty.value = false })
@@ -141,6 +154,7 @@ function openCreate() {
 
 function openEdit(gateway: Model.SgGateway) {
   drawerMode.value = 'edit'
+  editingConfigItemName.value = configItemNameFor(gateway)
   formModel.value = cloneJson(gateway)
   drawerOpen.value = true
   nextTick(() => { formSnapshot = JSON.stringify(formModel.value); isDirty.value = false })
@@ -155,7 +169,7 @@ async function save() {
     if (drawerMode.value === 'create') {
       await Api.postConfigItemGateway(formModel.value.name, formModel.value)
     } else {
-      await Api.putConfigItemGateway(formModel.value.name, formModel.value)
+      await Api.putConfigItemGateway(editingConfigItemName.value ?? configItemNameFor(formModel.value), formModel.value)
     }
     ElMessage.success(texts.value.saved)
     drawerOpen.value = false
@@ -167,12 +181,12 @@ async function save() {
 
 async function remove(gateway: Model.SgGateway) {
   try {
-    const count = routeCounts.value[gateway.name] ?? 0
+    const count = routeCounts.value[configItemNameFor(gateway)] ?? 0
     const message = texts.value.confirmDelete(gateway.name) + texts.value.deleteImpact(count)
     await ElMessageBox.confirm(message, texts.value.deleteTitle, {
       confirmButtonClass: 'el-button--danger',
     })
-    await Api.deleteConfigItemGateway(gateway.name)
+    await Api.deleteConfigItemGateway(configItemNameFor(gateway))
     ElMessage.success(texts.value.deleted)
     await load()
   } catch (error) {
@@ -182,7 +196,12 @@ async function remove(gateway: Model.SgGateway) {
 }
 
 function viewRoutes(gateway: Model.SgGateway) {
-  router.push({ path: '/routes', query: { gatewayName: gateway.name } })
+  router.push({ path: '/routes', query: { gatewayName: configItemNameFor(gateway) } })
+}
+
+// 兼容创建后尚未重新加载列表的网关，创建时配置项 ID 与网关名称相同。
+function configItemNameFor(gateway: Model.SgGateway): string {
+  return configItemNames.value[gateway.name] ?? gateway.name
 }
 
 onMounted(load)
@@ -229,7 +248,7 @@ function gatewayTableRow(row: unknown): Model.SgGateway {
           <template #default="{ row }">{{ listenerSummary(gatewayTableRow(row)) }}</template>
         </el-table-column>
         <el-table-column :label="texts.routes" width="100">
-          <template #default="{ row }">{{ routeCounts[gatewayTableRow(row).name] ?? '-' }}</template>
+          <template #default="{ row }">{{ routeCounts[configItemNameFor(gatewayTableRow(row))] ?? '-' }}</template>
         </el-table-column>
         <el-table-column :label="texts.plugins" width="100">
           <template #default="{ row }">{{ pluginCount(gatewayTableRow(row).plugins) }}</template>
